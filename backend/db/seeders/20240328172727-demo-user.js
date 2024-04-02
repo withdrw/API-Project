@@ -1,6 +1,6 @@
 "use strict";
 
-const { User } = require("../models");
+const { User } = require("../models"); // goes for every file in the seeders with what you are requiring
 const bcrypt = require("bcryptjs");
 
 let options = {};

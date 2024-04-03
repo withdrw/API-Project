@@ -20,7 +20,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          models : 'Users'
+          model : 'Users'
         }
       },
       address: {
@@ -74,7 +74,6 @@ module.exports = {
     );
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Spots');
      options.tableName = "Spots";
      return queryInterface.dropTable(options);
 

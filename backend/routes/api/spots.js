@@ -11,7 +11,6 @@ const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
 
 const { User, Spot, Review, SpotImage } = require("../../db/models");
-const user = require("../../db/models/user");
 
 async function newAvg(spots) {
   const newSpots = spots;
@@ -58,7 +57,9 @@ router.get("/current", async (req, res) => {
     },
   });
   await newAvg(spots);
+  console.log("total values")
   await newImages(spots);
+  console.log("total values")
   res.json(spots);
 });
 
@@ -140,11 +141,9 @@ router.post("/:spotId/images", requireAuth, async (req, res) => {
     res.status(404).json({ message: "Spot not found" });
   }
   if (spot.ownerId !== user.id) {
-    return res
-      .status(404)
-      .json({
-        message: "Unauthorized. Spot does not belong to the current user",
-      });
+    return res.status(404).json({
+      message: "Unauthorized. Spot does not belong to the current user",
+    });
   }
 
   const newImage = await await SpotImage.create({ url, preview });
@@ -154,8 +153,8 @@ router.post("/:spotId/images", requireAuth, async (req, res) => {
 router.put("/:spotId", requireAuth, async (req, res) => {
   const spotId = parseInt(req.params.spotId);
   const spot = Spot.findByPk(spotId);
-   const { address, city, state, country, lat, lng, name, description, price } =
-     req.body;
+  const { address, city, state, country, lat, lng, name, description, price } =
+    req.body;
 
   if (!spot) {
     return res.status(404).json({ message: "Spot not found" });
@@ -171,7 +170,7 @@ router.put("/:spotId", requireAuth, async (req, res) => {
     errors.city = "City is required";
   }
 
-  if (!state) {
+  if (!state || typeof String) {
     errors.state = "State is required";
   }
 
@@ -205,24 +204,36 @@ router.put("/:spotId", requireAuth, async (req, res) => {
       errors: errors,
     });
   }
-const newSpot = await Spot.update({
-  address,
-  city,
-  state,
-  country,
-  lat,
-  lng,
-  name,
-  description,
-  price,
-});
+  const newSpot = await Spot.update({
+    address,
+    city,
+    state,
+    country,
+    lat,
+    lng,
+    name,
+    description,
+    price,
+  });
   res.status(201).json(newSpot);
 });
 
 // start by finding a spot , create a spot image , assign its spot id to its current spot
 // REVIEW IMAGES HAS A LIMIT OF 10
 // ROUTER POST API / SPOT /
-// DELETE 
+// DELETE
 
+router.delete("/:spotId", requireAuth, async (req, res) => {
+  const spotId = req.params.spotId;
+  const spot = await Spot.findOne({
+    where: { id: spotId },
+  });
+
+  if (!spot) {
+    return res.status(404).json({ message: "Spot couldn't be found" });
+  }
+  await Spot.destroy({ where: { id: spotId } });
+  res.status(200).json({ message: "Successfully deleted" });
+});
 
 module.exports = router;

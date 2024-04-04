@@ -21,7 +21,9 @@ module.exports = {
           type: Sequelize.INTEGER,
           references: {
             model: "Spots",
+            key : "id"
           },
+          onDelete : "CASCADE"
         },
         url: {
           type: Sequelize.STRING,

@@ -10,7 +10,7 @@ const {
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
 
-const { User, Spot, Review, SpotImage } = require("../../db/models");
+const { User, Spot, Review, SpotImage, Booking } = require("../../db/models");
 
 async function newAvg(spots) {
   const newSpots = spots;
@@ -64,8 +64,26 @@ router.get("/current", async (req, res) => {
 });
 
 router.get("/:spotId", async (req, res) => {
-  const spots = await Spot.findByPk(req.params.spotId);
-  res.json(spots);
+  const spotId = req.params.spotId;
+  const newSpot = await Spot.findAll({
+    where: {
+      id: spotId,
+    },
+    include: [
+      {
+        model: SpotImage,
+        attributes: ["id", "url", "preview"],
+      },
+      {
+        model: User,
+        attributes: ["id", "firstName", "lastName"],
+      },
+    ],
+  });
+  if (!newSpot) {
+    res.status(404).json({ message : "Spot couldn't be found"})
+   }
+  res.json(newSpot);
 });
 
 router.post("/", requireAuth, async (req, res, next) => {
@@ -264,5 +282,9 @@ router.post("/:spotId/reviews", async (req, res) => {
   });
   res.json(createReview);
 });
+
+// Get all Bookings for a Spot based on the Spot's id
+
+// Create a Booking from a Spot based on the Spot's id
 
 module.exports = router;

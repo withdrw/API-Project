@@ -28,6 +28,16 @@ module.exports = {
         url: "image url",
         preview: false,
       },
+      {
+        id: 3,
+        url: "image url",
+        preview: false,
+      },
+      {
+        id: 4,
+        url: "image url",
+        preview: false,
+      },
     ],
     );
   },

@@ -15,8 +15,14 @@ module.exports = {
         startDate: "2022-10-10",
         endDate: "2023-10-10",
       },
+      {
+        spotId: 2,
+        userId: 2,
+        startDate: "2022-10-10",
+        endDate: "2023-10-10",
+      },
     ],
-      
+
     );
     /**
      * Add seed commands here.

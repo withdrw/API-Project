@@ -21,7 +21,6 @@ const {
 router.get("/current", async (req, res) => {
   const userId = req.user.id;
 
-  console.log("spots");
   const reviews = await Review.findAll({
     where: {
       userId: userId,
@@ -45,13 +44,13 @@ router.get("/current", async (req, res) => {
           "name",
           "price",
         ],
-        include: [
-          {
-            model: SpotImage,
-            where: { preview: true },
-            attributes: ["url"],
-          },
-        ],
+        include:
+        {
+          model: SpotImage,
+          where: { preview: true },
+          attributes: ["url"],
+        },
+
       },
       {
         model: ReviewImage,
@@ -59,6 +58,7 @@ router.get("/current", async (req, res) => {
       },
     ],
   });
+  console.log("this is my reviews:", reviews[0]);
 
   res.status(200).json({ Reviews: reviews });
 });
@@ -114,5 +114,14 @@ router.delete("/:reviewId", requireAuth, async (req, res) => {
   await Review.destroy({ where: { id: reviewId } });
   res.status(200).json({ message: "Successfully deleted" });
 });
+
+
+router.post('/:reviewId/images', async (req, res) => {
+
+
+
+})
+
+
 
 module.exports = router;

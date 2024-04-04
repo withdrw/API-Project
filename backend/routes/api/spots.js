@@ -287,4 +287,10 @@ router.post("/:spotId/reviews", async (req, res) => {
 
 // Create a Booking from a Spot based on the Spot's id
 
+
+
+
+
+
+
 module.exports = router;

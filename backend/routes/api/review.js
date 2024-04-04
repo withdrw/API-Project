@@ -44,13 +44,11 @@ router.get("/current", async (req, res) => {
           "name",
           "price",
         ],
-        include:
-        {
+        include: {
           model: SpotImage,
           where: { preview: true },
           attributes: ["url"],
         },
-
       },
       {
         model: ReviewImage,
@@ -115,13 +113,40 @@ router.delete("/:reviewId", requireAuth, async (req, res) => {
   res.status(200).json({ message: "Successfully deleted" });
 });
 
-
-router.post('/:reviewId/images', async (req, res) => {
-
-
-
+///reviews/:reviewId/images
+//  WORKS BUT STILL COULD USE SOME DEBUGGING
+router.post('/:reviewId/images', requireAuth, async(req, res) => {
+  const reviewId = req.params.reviewId
+  const review = await Review.findByPk(reviewId);
+  const { url } = req.body
+  if (!review){
+    res.status(404)
+    return res.json({
+      message: "Review couldn't be found"
+    })
+  }
+  const allImages = await ReviewImage.count({
+    where: {
+      reviewId
+    }
+  })
+  if (allImages >= 10){
+    res.status(403).json({
+      message: "Maximum number of images for this resource was reached"
+    })
+  }
+  if (req.user.id === review.userId){
+    const newImg = await ReviewImage.create({
+      reviewId: review.id, url: url
+    })
+    return res.json({
+      id: newImg.id,
+      url
+    })
+  } else {
+    res.status(403).json({
+      message: "Forbidden"
+    })
+  }
 })
-
-
-
 module.exports = router;

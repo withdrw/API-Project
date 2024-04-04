@@ -1,9 +1,13 @@
 "use strict";
 
+const { SpotImage } = require("../models");
+
 let options = {};
 if (process.env.NODE_ENV === "production") {
   options.schema = process.env.SCHEMA; // define your schema in options object
 }
+
+
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -17,24 +21,19 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    await queryInterface.bulkInsert("SpotImages", [
+    await SpotImage.bulkCreate([
       {
-        id: 1,
+        spotId: 1,
         url: "image url",
         preview: true,
       },
       {
-        id: 2,
+        spotId: 2,
         url: "image url",
         preview: false,
       },
       {
-        id: 3,
-        url: "image url",
-        preview: false,
-      },
-      {
-        id: 4,
+        spotId: 3,
         url: "image url",
         preview: false,
       },

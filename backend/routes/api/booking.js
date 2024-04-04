@@ -42,11 +42,13 @@ router.get("/current", async (req, res) => {
           "name",
           "price",
         ],
-        include: {
-          model: SpotImage,
-          where: { preview: true },
-          attributes: ["url"],
-        },
+        include: [
+          {
+            model: SpotImage,
+            // where: { preview: true },
+            attributes: ["url"],
+          },
+        ],
       },
     ],
   });
@@ -58,6 +60,10 @@ router.get("/current", async (req, res) => {
 
 // Delete an existing booking.
 
-router.delete("/:bookingId", async (req, res) => {});
+router.delete("/:bookingId", async (req, res) => {
+
+    
+
+});
 
 module.exports = router;

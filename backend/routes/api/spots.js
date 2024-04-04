@@ -57,9 +57,9 @@ router.get("/current", async (req, res) => {
     },
   });
   await newAvg(spots);
-  console.log("total values")
+  console.log("total values");
   await newImages(spots);
-  console.log("total values")
+  console.log("total values");
   res.json(spots);
 });
 
@@ -234,6 +234,35 @@ router.delete("/:spotId", requireAuth, async (req, res) => {
   }
   await Spot.destroy({ where: { id: spotId } });
   res.status(200).json({ message: "Successfully deleted" });
+});
+
+router.post("/:spotId/reviews", async (req, res) => {
+  const spotId = req.params.spotId;
+  const spot = await Spot.findByPk(spotId);
+  let { review, stars } = req.body;
+  const rev = await Review.findOne({
+    where: {
+      userId: req.user.id,
+      spotId: spotId,
+    },
+  });
+  if (!spot) {
+    res.status(303).json({ message: "Spot couldn't be found" });
+  }
+
+  if (rev) {
+    res
+      .status(500)
+      .json({ message: "User already has a review for this spot" });
+  }
+
+  const createReview = await Review.create({
+    userId: req.user.id,
+    spotId,
+    review,
+    stars,
+  });
+  res.json(createReview);
 });
 
 module.exports = router;

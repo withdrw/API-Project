@@ -76,13 +76,14 @@ router.get("/:spotId", async (req, res) => {
       },
       {
         model: User,
+        as: "Owner",
         attributes: ["id", "firstName", "lastName"],
       },
     ],
   });
   if (!newSpot) {
-    res.status(404).json({ message : "Spot couldn't be found"})
-   }
+    res.status(404).json({ message: "Spot couldn't be found" });
+  }
   res.json(newSpot);
 });
 
@@ -174,6 +175,12 @@ router.put("/:spotId", requireAuth, async (req, res) => {
   const { address, city, state, country, lat, lng, name, description, price } =
     req.body;
 
+    if (spot.ownerId !== user.id) {
+      return res.status(404).json({
+        message: "Unauthorized. Spot does not belong to the current user",
+      });
+    }
+
   if (!spot) {
     return res.status(404).json({ message: "Spot not found" });
   }
@@ -247,6 +254,12 @@ router.delete("/:spotId", requireAuth, async (req, res) => {
     where: { id: spotId },
   });
 
+    if (spot.ownerId !== user.id) {
+      return res.status(404).json({
+        message: "Unauthorized. Spot does not belong to the current user",
+      });
+    }
+
   if (!spot) {
     return res.status(404).json({ message: "Spot couldn't be found" });
   }
@@ -287,10 +300,106 @@ router.post("/:spotId/reviews", async (req, res) => {
 
 // Create a Booking from a Spot based on the Spot's id
 
+router.get("/:spotId/bookings", async (req, res) => {
+  const spotId = req.params.spotId;
+  const userId = req.user.id;
+  const spot = await Spot.findByPk(spotId);
+  if (!spot) {
+    return res.status(404).json({ message: "Spot couldn't be found" });
+  }
+  const bookings = await Booking.findAll({
+    where: { spotId },
+    include: [
+      {
+        model: User,
+        attributes: ["id", "firstName", "lastName"],
+      },
+    ],
+  });
+  if (spot.ownerId === userId) {
+    return res.status(200).json({ Bookings: bookings });
+  } else {
+    const newBooking = bookings.map((booking) => ({
+      spotId: booking.spotId,
+      startDate: booking.startDate,
+      endDate: booking.endDate,
+    }));
+    return res.status(200).json({ Bookings: newBooking });
+  }
+});
 
+router.post("/:spotId/bookings", requireAuth, async (req, res) => {
+  const { spotId } = req.params;
+  const { startDate, endDate } = req.body;
+  const userId = req.user.id;
 
+      if (sport.ownerId !== user.id) {
+        return res.status(404).json({
+          message: "Unauthorized. Spot does not belong to the current user",
+        });
+      }
 
+  // how to get current date
+  const spot = await Spot.findByPk(spotId);
 
+  if (!spot) {
+    res.status(404).json({ message: "spot could not be found" });
+  }
+  const errors = {};
+  const currentDate = new Date().toISOString().split("T")[0];
 
+  if (!startDate || new Date(startDate) < new Date(currentDate)) {
+    errors.startDate = "The start date must be today or later.";
+  }
 
+  if (!endDate || new Date(endDate) <= new Date(startDate)) {
+    errors.endDate = "The end date must be after the start date.";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json({ message: "Bad Request", errors });
+  }
+
+  const booked = await Booking.findOne({
+    where: {
+      spotId,
+      [Op.or]: [
+        {
+          startDate: {
+            [Op.between]: [startDate, endDate],
+          },
+        },
+        {
+          endDate: {
+            [Op.between]: [startDate, endDate],
+          },
+        },
+        {
+          [Op.and]: [
+            { startDate: { [Op.lte]: startDate } },
+            { endDate: { [Op.gte]: endDate } },
+          ],
+        },
+      ],
+    },
+  });
+
+  if (booked) {
+    return res.status(403).json({
+      message: "Sorry, this spot is already booked for the specified dates",
+      errors: {
+        startDate: "Start date conflicts with an existing booking",
+        endDate: "End date conflicts with an existing booking",
+      },
+    });
+  }
+
+  const newBooking = await Booking.create({
+    spotId,
+    userId,
+    startDate,
+    endDate,
+  });
+  res.status(200).json(newBooking);
+});
 module.exports = router;

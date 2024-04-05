@@ -62,9 +62,16 @@ router.get("/current", async (req, res) => {
 });
 
 /// EDIT A REVIEW
-router.put("/:reviewId", async (req, res) => {
+router.put("/:reviewId", requireAuth, async (req, res) => {
   const reviewId = req.params.reviewId;
   const { review, stars } = req.body;
+
+      if (review.userId !== user.id) {
+        return res.status(404).json({
+          message: "Unauthorized. Review does not belong to the current user",
+        });
+      }
+
 
   try {
     const rev = await Review.findByPk(reviewId);
@@ -104,6 +111,11 @@ router.delete("/:reviewId", requireAuth, async (req, res) => {
   const review = await Review.findOne({
     where: { id: reviewId },
   });
+      if (review.userId !== user.id) {
+        return res.status(404).json({
+          message: "Unauthorized. Review does not belong to the current user",
+        });
+      }
 
   if (!review) {
     return res.status(404).json({ message: "Review couldn't be found" });
@@ -119,6 +131,14 @@ router.post('/:reviewId/images', requireAuth, async(req, res) => {
   const reviewId = req.params.reviewId
   const review = await Review.findByPk(reviewId);
   const { url } = req.body
+
+    if (review.userId !== user.id) {
+      return res.status(404).json({
+        message: "Unauthorized. Review does not belong to the current user",
+      });
+    }
+
+
   if (!review){
     res.status(404)
     return res.json({

@@ -46,7 +46,7 @@ router.get("/current", async (req, res) => {
         ],
         include: {
           model: SpotImage,
-          where: { preview: true },
+          // where: { preview: true },
           attributes: ["url"],
         },
       },
@@ -66,17 +66,16 @@ router.put("/:reviewId", requireAuth, async (req, res) => {
   const reviewId = req.params.reviewId;
   const { review, stars } = req.body;
 
-      if (review.userId !== user.id) {
-        return res.status(404).json({
-          message: "Unauthorized. Review does not belong to the current user",
-        });
-      }
 
 
-  try {
-    const rev = await Review.findByPk(reviewId);
+  const rev = await Review.findByPk(reviewId);
+  if (reviewId !== req.user.id) {
+    return res.status(404).json({
+      message: "Unauthorized. Review does not belong to the current user",
+    });
+  }
 
-    if (!rev) {
+    if (!review) {
       return res.status(404).json({
         message: "Review couldn't be found",
       });
@@ -99,10 +98,6 @@ router.put("/:reviewId", requireAuth, async (req, res) => {
     await rev.save();
 
     res.json(rev);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
 });
 /// DELETE REVIEWS
 
@@ -111,7 +106,7 @@ router.delete("/:reviewId", requireAuth, async (req, res) => {
   const review = await Review.findOne({
     where: { id: reviewId },
   });
-      if (review.userId !== user.id) {
+      if (review.userId !== req.user.id) {
         return res.status(404).json({
           message: "Unauthorized. Review does not belong to the current user",
         });
@@ -132,7 +127,7 @@ router.post('/:reviewId/images', requireAuth, async(req, res) => {
   const review = await Review.findByPk(reviewId);
   const { url } = req.body
 
-    if (review.userId !== user.id) {
+    if (review.userId !== req.user.id) {
       return res.status(404).json({
         message: "Unauthorized. Review does not belong to the current user",
       });
@@ -169,4 +164,8 @@ router.post('/:reviewId/images', requireAuth, async(req, res) => {
     })
   }
 })
+
+
+
+
 module.exports = router;

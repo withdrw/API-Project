@@ -10,7 +10,7 @@ const {
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
 
-const { User, Spot, Review, SpotImage, Booking } = require("../../db/models");
+const { User, Spot, Review, SpotImage, Booking , ReviewImage } = require("../../db/models");
 
 async function newAvg(spots) {
   const newSpots = spots;
@@ -43,10 +43,68 @@ async function newImages(spots) {
 }
 
 router.get("/", async (req, res, next) => {
-  const spots = await Spot.findAll();
+
+
+
+
+  let { page = 1, size = 20 } = req.query;
+  const err = new Error()
+  err.errors = {}
+
+       page = parseInt(page);
+       size = parseInt(size);
+
+    offset = (page - 1) * size;
+
+  if (isNaN(page) || page < 1 || page > 10) {
+    err.errors.page("Page must be greater than or equal to 1");
+    err.status = 400
+    throw err
+
+}
+
+if (isNaN(size) || size < 1 || size > 20) {
+  err.errors.size("Size must be greater than or equal to 1");
+  err.status = 400
+  throw err
+}
+
+
+
+
+// const spots = await Spot.findAll({
+//   limit: size,
+//   offset: offset,
+// });
+// await avgStars(spots);
+// await findPrevImg(spots);
+// res.json({ Spots: spots, page, size });
+
+
+
+
+
+
+
+  const spots = await Spot.findAll({
+    limit: size,
+    offset : offset
+  });
   await newAvg(spots);
   await newImages(spots);
-  res.json(spots);
+  for (const spot of spots) {
+    //  console.log(spot)
+    //  console.log(spot.dataValues.previewImage);
+     if (!spot.dataValues.previewImage) {
+       spot.dataValues.previewImage = 'No image yet';
+       spot.save();
+     }
+   }
+
+
+
+
+   res.json(spots , page , size);
 });
 
 router.get("/current", async (req, res) => {
@@ -57,15 +115,40 @@ router.get("/current", async (req, res) => {
     },
   });
   await newAvg(spots);
-  console.log("total values");
   await newImages(spots);
-  console.log("total values");
+  console.log(spots)
+  for (const spot of spots) {
+    if (!spot.dataValues.previewImage) {
+      spot.dataValues.previewImage = 'No Image Yet'
+      spot.save();
+    }
+  }
+  // const payload = spots.map(spot => {
+  //  let avg = newAvg(spot)
+  //   newImages(spot)
+  //   console.log(spot)
+  //    return {
+  //     id: spot.id,
+  //     ownerId: spot.ownerId,
+  //     address: spot.address,
+  //     city: spot.city,
+  //     country: spot.country,
+  //     lat: spot.lat,
+  //     lng: spot.lng,
+  //     name: spot.name,
+  //     description: spot.description,
+  //     price: spot.price,
+  //     createdAt: spot.createdAt,
+  //     updatedAt: spot.updatedAt,
+  //     avgRating: spot.avgRating,
+  //   }
+  // })
   res.json(spots);
 });
 
 router.get("/:spotId", async (req, res) => {
   const spotId = req.params.spotId;
-  const newSpot = await Spot.findAll({
+  const newSpot = await Spot.findOne({
     where: {
       id: spotId,
     },
@@ -82,8 +165,16 @@ router.get("/:spotId", async (req, res) => {
     ],
   });
   if (!newSpot) {
-    res.status(404).json({ message: "Spot couldn't be found" });
+    let err = new Error("Spot couldn't be found")
+    err.status = 404
+    throw err
   }
+  const review = await Review.findAll({
+    where: {
+      spotId : spotId
+    }
+  })
+  newSpot.dataValues.numReviews = review.length
   res.json(newSpot);
 });
 
@@ -157,12 +248,14 @@ router.post("/:spotId/images", requireAuth, async (req, res) => {
 
   const spot = await Spot.findByPk(req.params.spotId);
   if (!spot) {
-    res.status(404).json({ message: "Spot not found" });
+    let err = new Error('Spot not found')
+    err.status = 404
+    throw err
   }
   if (spot.ownerId !== user.id) {
-    return res.status(404).json({
-      message: "Unauthorized. Spot does not belong to the current user",
-    });
+    let err = new Error("Unauthorized. Spot does not belong to the current user")
+    err.status = 404
+    throw err
   }
 
   const newImage = await await SpotImage.create({ url, preview });
@@ -175,14 +268,16 @@ router.put("/:spotId", requireAuth, async (req, res) => {
   const { address, city, state, country, lat, lng, name, description, price } =
     req.body;
 
-    if (spot.ownerId !== user.id) {
-      return res.status(404).json({
-        message: "Unauthorized. Spot does not belong to the current user",
-      });
+  if (spot.ownerId !== user.id) {
+    let err = new Error("Unauthorized. Spot does not belong to the current user")
+    err.status = 404
+    throw err
     }
 
   if (!spot) {
-    return res.status(404).json({ message: "Spot not found" });
+    let err = new Error("Spot not found");
+    err.status = 404
+    throw err
   }
 
   const errors = {};
@@ -254,18 +349,63 @@ router.delete("/:spotId", requireAuth, async (req, res) => {
     where: { id: spotId },
   });
 
-    if (spot.ownerId !== user.id) {
-      return res.status(404).json({
-        message: "Unauthorized. Spot does not belong to the current user",
-      });
+  if (spot.ownerId !== user.id) {
+    res.status(404).json({
+         message : "Unauthorized "
+       })
     }
 
   if (!spot) {
-    return res.status(404).json({ message: "Spot couldn't be found" });
+    let err = new Error(
+      "Spot  could not be found"
+    );
+    err.status = 404;
+    throw err;
   }
   await Spot.destroy({ where: { id: spotId } });
-  res.status(200).json({ message: "Successfully deleted" });
+  let err = new Error("Successfully deleted")
+  err.status = 200
+  throw err
 });
+
+
+router.get('/:spotId/reviews', async (req, res) => {
+  const { spotId } = req.params
+  const spot = await Spot.findByPk(spotId)
+
+  if (!spot) {
+    res.status(404).json({
+      message : "spot not found"
+    })
+  }
+  const reviews = await Review.findAll({
+    where: {
+      spotId  :spotId
+    },
+    include: [
+      {
+        model: User,
+        attributes: [
+          "id",
+          "firstName",
+          "lastName"
+        ]
+      },
+      {
+        model: ReviewImage,
+        attributes: [
+          "id",
+          "url"
+        ]
+      }
+    ],
+
+
+  })
+    res.status(200).json({Reviews : reviews})
+
+})
+
 
 router.post("/:spotId/reviews", async (req, res) => {
   const spotId = req.params.spotId;
@@ -278,7 +418,9 @@ router.post("/:spotId/reviews", async (req, res) => {
     },
   });
   if (!spot) {
-    res.status(303).json({ message: "Spot couldn't be found" });
+    let err = new Error("Spot couldn't be found")
+    err.status = 303
+    throw err
   }
 
   if (rev) {
@@ -333,18 +475,18 @@ router.post("/:spotId/bookings", requireAuth, async (req, res) => {
   const { startDate, endDate } = req.body;
   const userId = req.user.id;
 
-      if (sport.ownerId !== user.id) {
-        return res.status(404).json({
-          message: "Unauthorized. Spot does not belong to the current user",
-        });
-      }
 
   // how to get current date
   const spot = await Spot.findByPk(spotId);
-
   if (!spot) {
     res.status(404).json({ message: "spot could not be found" });
   }
+  if (spot.ownerId !== userId) {
+    return res.status(404).json({
+      message: "Unauthorized. Spot does not belong to the current user",
+    });
+  }
+
   const errors = {};
   const currentDate = new Date().toISOString().split("T")[0];
 

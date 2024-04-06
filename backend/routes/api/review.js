@@ -56,7 +56,6 @@ router.get("/current", async (req, res) => {
       },
     ],
   });
-  console.log("this is my reviews:", reviews[0]);
 
   res.status(200).json({ Reviews: reviews });
 });
@@ -115,7 +114,6 @@ router.delete("/:reviewId", requireAuth, async (req, res) => {
   if (!review) {
     return res.status(404).json({ message: "Review couldn't be found" });
   }
-  console.log("first");
   await Review.destroy({ where: { id: reviewId } });
   res.status(200).json({ message: "Successfully deleted" });
 });

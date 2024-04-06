@@ -22,7 +22,6 @@ const {
 router.get("/current", async (req, res) => {
   const userId = req.user.id;
 
-  console.log("booking");
   const booking = await Booking.findAll({
     where: {
       userId: userId,
@@ -53,8 +52,6 @@ router.get("/current", async (req, res) => {
     ],
   });
 
-  console.log("booking");
-
   res.status(200).json({ Bookings: booking });
 });
 
@@ -65,43 +62,55 @@ router.put("/:bookingId", requireAuth, async (req, res) => {
   const { startDate, endDate } = req.body;
 
   const booking = await Booking.findByPk(bookingId);
+
+  // No booking there
   if (!booking) {
-    return res.status(404).json({
-      message: "Booking could not be found",
-    });
+    let err = new Error("booking could not be found")
+    err.status = 404
+    throw err
   }
+
+  // User does not own the booking
+
   if (booking.userId !== req.user.id) {
-    return res.status(403).json({
-      message: "Unauthorized. Booking does not belong to the current user",
-    });
+    let err = new Error("Forbidden");
+    err.status = 403;
+    throw err;
   }
-  const err = new Error();
+
+  // Message thrown when booking is checking if startDate and endDate exist
+  const err = new Error("Bad Request");
   err.errors = {};
 
   if (!startDate) {
     err.errors.startDate = "startDate required";
     err.status = 400;
   }
-  if (!endDate ) {
+  if (!endDate) {
     err.errors.endDate = "endDate required";
     err.status = 400;
   }
   if (err.status === 400) {
-    throw err
-  } 
-  if (new Date(booking.startDate) < new Date()) {
-    const errTwo = new Error()
-   err.message = "Past bookings cant be modified"; //REFACTOR FOR ERR
-    err.status = 403
-    throw err
+    throw err;
   }
 
+  // Cant modify past bookings
+
+  if (new Date(booking.startDate) < new Date()) {
+    let err = new Error("Past bookings cant be modified");
+    err.status = 403;
+    throw err;
+  }
+
+  // start date can not be in the past
   if (new Date(startDate) < new Date()) {
     err.errors.startDate = "startDate can not be in the past";
     err.status = 400;
   }
 
-  if (endDate <= startDate) {
+  // end date can not be on or before startDate
+
+  if (new Date(endDate) <= new Date(startDate)) {
     err.errors.endDate = "endDate can not be on or before startDate";
     err.status = 400;
   }
@@ -116,46 +125,55 @@ router.put("/:bookingId", requireAuth, async (req, res) => {
     },
   });
 
+  // loop through bookings
+
   for (let book of getBookings) {
     // let firstDate = book.startDate;
     // let lastDate = book.endDate;
     if (book.id !== bookingId) {
-      if (startDate <= book.startDate && startDate >= book.endDate) {
+      if (
+        new Date(startDate) <= book.startDate &&
+        new Date(startDate) >= book.endDate
+      ) {
+        let err = new Error("Bad Request");
+        err.errors = {};
         err.errors.startDate = "Start date conflicts with an existing booking";
-        err.message =
-          "Sorry, this spot is already booked for the specified dates";
         err.status = 400;
       }
-      if (endDate >= book.startDate && endDate <= book.endDate) {
+      if (new Date(endDate) >= book.startDate && new Date(endDate) <= book.endDate) {
+        let err = new Error("Bad Request")
+        err.errors = {};
         err.errors.endDate = "End date conflicts with an existing booking";
-        err.message =
-          "Sorry, this spot is already booked for the specified dates";
         err.status = 400;
       }
     } else {
+      // checking if start date is in the past
       if (new Date(startDate) < new Date()) {
+        let err = new Error("Bad Request")
+        err.errors = {};
         err.errors.startDate = "startDate cannot be in the past"(
           (err.status = 400)
         );
       }
-      if (endDate <= startDate) {
+      // checking if endDate is on or before startDate
+
+      if (new Date(endDate) <= new Date(startDate)) {
+        let err = new Error('Bad Request')
         err.errors.endDate = "endDate cannot be or before startDate ";
         err.status = 400;
       }
     }
-      if (err.status === 400) {
-        throw err
-      }
+    if (err.status === 400) {
+      throw err;
+    }
   }
   const updateBooking = await booking.update({
-    startDate :  startDate,
-    endDate : endDate,
+    startDate,
+    endDate,
   });
 
   res.json(updateBooking);
 });
-
-
 
 router.delete("/:bookingId", requireAuth, async (req, res) => {
   const { bookingId } = req.params;

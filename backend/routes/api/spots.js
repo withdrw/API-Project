@@ -14,15 +14,11 @@ const { User, Spot, Review, SpotImage, Booking , ReviewImage } = require("../../
 
 async function newAvg(spots) {
   const newSpots = spots;
-  console.log("avgSpot");
-  console.log(newSpots);
   for (const avgSpot of newSpots) {
     const reviews = await Review.findAll({
       where: { spotId: avgSpot.id },
     });
     const total = reviews.reduce((sum, reviews) => sum + reviews.stars, 0);
-    console.log("total value", total);
-    console.log(reviews);
     avgSpot.dataValues.avgRating = total / reviews.length;
   }
 }
@@ -116,7 +112,6 @@ router.get("/current", async (req, res) => {
   });
   await newAvg(spots);
   await newImages(spots);
-  console.log(spots)
   for (const spot of spots) {
     if (!spot.dataValues.previewImage) {
       spot.dataValues.previewImage = 'No Image Yet'
@@ -268,7 +263,7 @@ router.put("/:spotId", requireAuth, async (req, res) => {
   const { address, city, state, country, lat, lng, name, description, price } =
     req.body;
 
-  if (spot.ownerId !== user.id) {
+  if (spot.ownerId !== req.user.id) {
     let err = new Error("Unauthorized. Spot does not belong to the current user")
     err.status = 404
     throw err
@@ -349,7 +344,7 @@ router.delete("/:spotId", requireAuth, async (req, res) => {
     where: { id: spotId },
   });
 
-  if (spot.ownerId !== user.id) {
+  if (spot.ownerId !== req.user.id) {
     res.status(404).json({
          message : "Unauthorized "
        })

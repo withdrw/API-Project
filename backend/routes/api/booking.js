@@ -19,7 +19,7 @@ const {
   Booking,
 } = require("../../db/models");
 
-router.get("/current", async (req, res) => {
+router.get("/current", requireAuth , async (req, res) => {
   const userId = req.user.id;
 
   const booking = await Booking.findAll({

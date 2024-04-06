@@ -22,7 +22,19 @@ const validateSignup = [
     .exists({ checkFalsy: true })
     .isLength({ min: 4 })
     .withMessage("Please provide a username with at least 4 characters."),
-  check("username").not().isEmail().withMessage("Username cannot be an email."),
+  check("username")
+    .exists({ checkFalsy: true })
+    .withMessage("Username is required"),
+  check("firstName")
+    .exists({ checkFalsy: true })
+    .withMessage("firstName is required"),
+  check("lastName")
+    .exists({ checkFalsy: true })
+    .withMessage(" last name is required"),
+  check("lastName")
+    .isLength({ min: 4 })
+    .withMessage("Username is required"),
+  check("username").not().isEmail().withMessage("username cannot be an email."),
   check("password")
     .exists({ checkFalsy: true })
     .isLength({ min: 6 })
@@ -36,13 +48,36 @@ const validateSignup = [
 
 // Sign up
 router.post("/", validateSignup, async (req, res) => {
-  const { email, password, userName, firstName, lastName } = req.body;
+  const { email, password, username, firstName, lastName } = req.body;
   const hashedPassword = bcrypt.hashSync(password);
+
+
+  const userExists = await User.findOne({
+    where: { username }
+  })
+  const mailExists = await User.findOne({
+    where: { email }
+  })
+
+
+  if (userExists || mailExists) {
+    let err = new Error('User already exists')
+    err.status = 500
+    err.errors = {}
+    if (userExists)err.errors.username = 'User with that name email already exists'
+
+    if (mailExists) err.errors.email = 'User with that name email already exists'
+
+    throw err
+
+  }
+
+
   const user = await User.create({
     email,
     firstName,
     lastName,
-    userName,
+    username,
     hashedPassword,
   });
 
@@ -51,7 +86,7 @@ router.post("/", validateSignup, async (req, res) => {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    username: user.userName,
+    username: user.username,
   };
 
   await setTokenCookie(res, safeUser);

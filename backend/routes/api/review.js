@@ -18,7 +18,7 @@ const {
   ReviewImage,
 } = require("../../db/models");
 
-router.get("/current", async (req, res) => {
+router.get("/current", requireAuth, async (req, res) => {
   const userId = req.user.id;
 
   const reviews = await Review.findAll({
@@ -121,16 +121,9 @@ router.delete("/:reviewId", requireAuth, async (req, res) => {
 ///reviews/:reviewId/images
 //  WORKS BUT STILL COULD USE SOME DEBUGGING
 router.post('/:reviewId/images', requireAuth, async(req, res) => {
-  const reviewId = req.params.reviewId
+  const reviewId = parseInt(req.params.reviewId)
   const review = await Review.findByPk(reviewId);
   const { url } = req.body
-
-    if (review.userId !== req.user.id) {
-      return res.status(404).json({
-        message: "Unauthorized. Review does not belong to the current user",
-      });
-    }
-
 
   if (!review){
     res.status(404)
@@ -138,6 +131,13 @@ router.post('/:reviewId/images', requireAuth, async(req, res) => {
       message: "Review couldn't be found"
     })
   }
+    if (review.userId !== req.user.id) {
+      return res.status(403).json({
+        message: "Forbidden",
+      });
+    }
+
+
   const allImages = await ReviewImage.count({
     where: {
       reviewId

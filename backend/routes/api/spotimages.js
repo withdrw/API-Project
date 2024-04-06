@@ -20,7 +20,7 @@ const {
 
 
 router.delete('/:imageId', requireAuth, async (req, res) => {
-    const newId = req.params.imageId
+    const newId = parseInt(req.params.imageId)
 
     const newSpot = await SpotImage.findByPk(newId, {
         include:
@@ -38,13 +38,14 @@ router.delete('/:imageId', requireAuth, async (req, res) => {
       throw err
     }
 
-  if (req.user.id === newSpot.Spot.ownerId) {
+  if (req.user.id === newSpot.ownerId) {
       await newSpot.destroy()
     res.status(200).json({
         message : "successfully deleted"
     })
   } else {
-    let err = new Error('Spot does not belong to the current user ')
+    let err = new Error('Forbidden ')
+    err.status = 403
     throw err
   }
 })

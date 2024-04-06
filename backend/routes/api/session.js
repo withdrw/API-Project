@@ -37,12 +37,11 @@ router.post("/", validateLogin, async (req, res, next) => {
   const user = await User.unscoped().findOne({
     where: {
       [Op.or]: {
-        userName: credential,
+        username: credential,
         email: credential,
       },
     },
   });
-
   if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
     const err = new Error("Login failed");
     err.status = 401;
@@ -51,10 +50,11 @@ router.post("/", validateLogin, async (req, res, next) => {
     return next(err);
   }
 
+
   const safeUser = {
     id: user.id,
     email: user.email,
-    username: user.userName,
+    username: user.username,
     firstName: user.firstName,
     lastName: user.lastName,
   };

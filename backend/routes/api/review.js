@@ -44,59 +44,60 @@ router.get("/current", requireAuth, async (req, res) => {
           "name",
           "price",
         ],
-        include: {
-          model: SpotImage,
-          // where: { preview: true },
-          attributes: ["url"],
+        include: [
+          {
+            model: SpotImage,
+            // where: { preview: true },
+            attributes: ["url"],
+          },
+        ]
         },
-      },
-      {
-        model: ReviewImage,
-        attributes: ["id", "url"],
-      },
+        {
+          model: ReviewImage,
+          attributes: ["id", "url"],
+        },
     ],
   });
 
-  res.status(200).json({ Reviews: reviews });
+  res.status(200).json(reviews);
 });
 
 /// EDIT A REVIEW
 router.put("/:reviewId", requireAuth, async (req, res) => {
   const reviewId = req.params.reviewId;
   const { review, stars } = req.body;
-
-
-
   const rev = await Review.findByPk(reviewId);
-  if (reviewId !== req.user.id) {
-    return res.status(404).json({
-      message: "Unauthorized. Review does not belong to the current user",
+    if (!review || stars < 1 || stars > 5) {
+      return res.status(400).json({
+        message: "Bad Request",
+        errors: {
+          review: "Review text is required",
+          stars: "Stars must be an integer from 1 to 5",
+        },
+      });
+    }
+
+      if (!rev) {
+        return res.status(404).json({
+          message: "Review couldn't be found",
+        });
+      }
+  if (rev.userId !== req.user.id) {
+    return res.status(403).json({
+      message: "Forbidden",
     });
   }
+    // if (review) {
+    //   rev.review = review;
+    // }
 
-    if (!review) {
-      return res.status(404).json({
-        message: "Review couldn't be found",
-      });
-    }
+    // if (stars) {
+    //   rev.stars = stars;
+    // }
 
-    if (req.user.id !== rev.userId) {
-      return res.status(403).json({
-        message: "You are not authorized to update this review",
-      });
-    }
+    await rev.update({review,stars});
 
-    if (review) {
-      rev.review = review;
-    }
-
-    if (stars) {
-      rev.stars = stars;
-    }
-
-    await rev.save();
-
-    res.json(rev);
+    return res.status(200).json(rev);
 });
 /// DELETE REVIEWS
 
@@ -105,15 +106,15 @@ router.delete("/:reviewId", requireAuth, async (req, res) => {
   const review = await Review.findOne({
     where: { id: reviewId },
   });
-      if (review.userId !== req.user.id) {
-        return res.status(404).json({
-          message: "Unauthorized. Review does not belong to the current user",
-        });
-      }
-
   if (!review) {
     return res.status(404).json({ message: "Review couldn't be found" });
   }
+      if (review.userId !== req.user.id) {
+        return res.status(403).json({
+          message: "Forbidden",
+        });
+      }
+
   await Review.destroy({ where: { id: reviewId } });
   res.status(200).json({ message: "Successfully deleted" });
 });

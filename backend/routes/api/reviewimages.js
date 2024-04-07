@@ -21,29 +21,30 @@ const {
 
 
 router.delete("/:imageId", requireAuth, async (req, res) => {
-  const newId = req.params.imageId;
-
-  const newReview = await ReviewImage.findByPk(newId, {
-    include: {
-      model: Review,
-      attributes: ["userId"],
-    },
+  const { imageId } = req.params;
+  const userId = req.user.id;
+  const newReview = await ReviewImage.findByPk(imageId, {
+    include: [
+      {
+        model: Review,
+        attributes: ["userId"],
+      },
+    ]
   });
   if (!newReview) {
-    let err = new Error("Spot Image couldn't be found");
-    err.status = 400;
+    let err = new Error("Review Image couldn't be found");
+    err.status = 404;
     throw err;
   }
+  if (newReview.Review.userId !== userId) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
 
-  if (req.user.id === newReview.Review.userId) {
+
     await newReview.destroy();
     res.status(200).json({
       message: "successfully deleted",
     });
-  } else {
-    let err = new Error("Spot does not belong to the current user ");
-    throw err;
-  }
 });
 
 

@@ -10,7 +10,14 @@ const {
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
 
-const { User, Spot, Review, SpotImage, Booking , ReviewImage } = require("../../db/models");
+const {
+  User,
+  Spot,
+  Review,
+  SpotImage,
+  Booking,
+  ReviewImage,
+} = require("../../db/models");
 
 async function newAvg(spots) {
   const newSpots = spots;
@@ -39,71 +46,54 @@ async function newImages(spots) {
 }
 
 router.get("/", async (req, res, next) => {
-
-
-
-
   let { page = 1, size = 20 } = req.query;
-  const err = new Error()
-  err.errors = {}
+  const err = new Error();
+  err.errors = {};
 
-       page = parseInt(page);
-       size = parseInt(size);
+  page = parseInt(page);
+  size = parseInt(size);
 
-    offset = (page - 1) * size;
+  offset = (page - 1) * size;
 
   if (isNaN(page) || page < 1 || page > 10) {
     err.errors.page("Page must be greater than or equal to 1");
-    err.status = 400
-    throw err
+    err.status = 400;
+    throw err;
+  }
 
-}
+  if (isNaN(size) || size < 1 || size > 20) {
+    err.errors.size("Size must be greater than or equal to 1");
+    err.status = 400;
+    throw err;
+  }
 
-if (isNaN(size) || size < 1 || size > 20) {
-  err.errors.size("Size must be greater than or equal to 1");
-  err.status = 400
-  throw err
-}
-
-
-
-
-// const spots = await Spot.findAll({
-//   limit: size,
-//   offset: offset,
-// });
-// await avgStars(spots);
-// await findPrevImg(spots);
-// res.json({ Spots: spots, page, size });
-
-
-
-
-
-
+  // const spots = await Spot.findAll({
+  //   limit: size,
+  //   offset: offset,
+  // });
+  // await avgStars(spots);
+  // await findPrevImg(spots);
+  // res.json({ Spots: spots, page, size });
 
   const spots = await Spot.findAll({
     limit: size,
-    offset : offset
+    offset: offset,
   });
   await newAvg(spots);
   await newImages(spots);
   for (const spot of spots) {
     //  console.log(spot)
     //  console.log(spot.dataValues.previewImage);
-     if (!spot.dataValues.previewImage) {
-       spot.dataValues.previewImage = 'No image yet';
-       spot.save();
-     }
-   }
+    if (!spot.dataValues.previewImage) {
+      spot.dataValues.previewImage = "No image yet";
+      spot.save();
+    }
+  }
 
-
-
-
-   res.json(spots , page , size);
+  res.json(spots, page, size);
 });
 
-router.get("/current", requireAuth ,async (req, res) => {
+router.get("/current", requireAuth, async (req, res) => {
   const { user } = req;
   const spots = await Spot.findAll({
     where: {
@@ -114,7 +104,7 @@ router.get("/current", requireAuth ,async (req, res) => {
   await newImages(spots);
   for (const spot of spots) {
     if (!spot.dataValues.previewImage) {
-      spot.dataValues.previewImage = 'No Image Yet'
+      spot.dataValues.previewImage = "No Image Yet";
       spot.save();
     }
   }
@@ -160,16 +150,16 @@ router.get("/:spotId", async (req, res) => {
     ],
   });
   if (!newSpot) {
-    let err = new Error("Spot couldn't be found")
-    err.status = 404
-    throw err
+    let err = new Error("Spot couldn't be found");
+    err.status = 404;
+    throw err;
   }
   const review = await Review.findAll({
     where: {
-      spotId : spotId
-    }
-  })
-  newSpot.dataValues.numReviews = review.length
+      spotId: spotId,
+    },
+  });
+  newSpot.dataValues.numReviews = review.length;
   res.json(newSpot);
 });
 
@@ -243,14 +233,14 @@ router.post("/:spotId/images", requireAuth, async (req, res) => {
 
   const spot = await Spot.findByPk(req.params.spotId);
   if (!spot) {
-    let err = new Error('Spot not found')
-    err.status = 404
-    throw err
+    let err = new Error("Spot not found");
+    err.status = 404;
+    throw err;
   }
   if (spot.ownerId !== user.id) {
-    let err = new Error("Forbidden")
-    err.status = 403
-    throw err
+    let err = new Error("Forbidden");
+    err.status = 403;
+    throw err;
   }
 
   const newImage = await await SpotImage.create({ url, preview });
@@ -259,23 +249,24 @@ router.post("/:spotId/images", requireAuth, async (req, res) => {
 
 router.put("/:spotId", requireAuth, async (req, res) => {
   const spotId = parseInt(req.params.spotId);
-  const spot =  await Spot.findByPk(spotId);
-  const { address, city, state, country, lat, lng, name, description, price } = req.body;
+  const spot = await Spot.findByPk(spotId);
+  const { address, city, state, country, lat, lng, name, description, price } =
+    req.body;
   if (!spot) {
     const err = new Error("Spot not found");
-    err.status = 404
-    throw err
+    err.status = 404;
+    throw err;
   }
 
   if (spot.ownerId !== req.user.id) {
-    let err = new Error("Unauthorized")
-    err.status = 403
-    throw err
-    }
+    let err = new Error("Unauthorized");
+    err.status = 403;
+    throw err;
+  }
 
-  const err = new Error('Bad Request')
-  err.status = 400
-   err.errors = {};
+  const err = new Error("Bad Request");
+  err.status = 400;
+  err.errors = {};
   if (!address) {
     err.errors.address = "Street address is required";
   }
@@ -342,76 +333,55 @@ router.delete("/:spotId", requireAuth, async (req, res) => {
   const spot = await Spot.findByPk(spotId);
 
   if (!spot) {
-    let err =new Error(
-      "Spot could not be found"
-    );
+    let err = new Error("Spot could not be found");
     err.status = 404;
     throw err;
   }
   if (spot.ownerId !== req.user.id) {
-    res.status(403).json({
-         message : "Forbidden "
-       })
-    }
-  spot.destroy();
-  res.status(200).json({ message :  "Successfully deleted"})
+     return res.status(403).json({message: "Forbidden "});
+  }
+   await spot.destroy();
+  res.status(200).json({ message: "Successfully deleted" });
 });
 
-
-router.get('/:spotId/reviews', async (req, res) => {
-  const { spotId } = req.params
-  const spot = await Spot.findByPk(spotId)
+router.get("/:spotId/reviews", async (req, res) => {
+  const { spotId } = req.params;
+  const spot = await Spot.findByPk(spotId);
 
   if (!spot) {
     res.status(404).json({
-      message : "spot not found"
-    })
+      message: "spot not found",
+    });
   }
   const reviews = await Review.findAll({
     where: {
-      spotId  :spotId
+      spotId: spotId,
     },
     include: [
       {
         model: User,
-        attributes: [
-          "id",
-          "firstName",
-          "lastName"
-        ]
+        attributes: ["id", "firstName", "lastName"],
       },
       {
         model: ReviewImage,
-        attributes: [
-          "id",
-          "url"
-        ]
-      }
+        attributes: ["id", "url"],
+      },
     ],
-
-
-  })
-    res.status(200).json({Reviews : reviews})
-
-})
-
+  });
+  res.status(200).json({ Reviews: reviews });
+});
 
 router.post("/:spotId/reviews", requireAuth, async (req, res) => {
   const spotId = req.params.spotId;
-  const spot = await Spot.findByPk(spotId);
+  const parsedSpotId = parseInt(spotId,10)
+  const spot = await Spot.findByPk(parsedSpotId);
   let { review, stars } = req.body;
   const rev = await Review.findOne({
     where: {
       userId: req.user.id,
-      spotId: spotId,
+      spotId: parsedSpotId,
     },
   });
-  if (!spot) {
-    let err = new Error("Spot couldn't be found")
-    err.status = 404
-    throw err
-  }
-
   if (!review || stars < 1 || stars > 5) {
     return res.status(400).json({
       message: "Bad Request",
@@ -421,21 +391,25 @@ router.post("/:spotId/reviews", requireAuth, async (req, res) => {
       },
     });
   }
+  if (!spot) {
+    let err = new Error("Spot couldn't be found");
+    err.status = 404;
+    throw err;
+  }
+
   if (rev) {
     res
       .status(500)
       .json({ message: "User already has a review for this spot" });
   }
 
-
-
   const createReview = await Review.create({
     userId: req.user.id,
-    spotId,
+    spotId : parsedSpotId,
     review,
     stars,
   });
-  res.json(createReview);
+  res.status(201).json(createReview);
 });
 
 // Get all Bookings for a Spot based on the Spot's id
@@ -474,22 +448,10 @@ router.post("/:spotId/bookings", requireAuth, async (req, res) => {
   const { spotId } = req.params;
   const { startDate, endDate } = req.body;
   const userId = req.user.id;
-
-
-  // how to get current date
-  const spot = await Spot.findByPk(spotId);
-  if (!spot) {
-    res.status(404).json({ message: "spot could not be found" });
-  }
-  if (spot.ownerId !== userId) {
-    return res.status(404).json({
-      message: "Unauthorized. Spot does not belong to the current user",
-    });
-  }
-
   const errors = {};
   const currentDate = new Date().toISOString().split("T")[0];
 
+  // how to get current date
   if (!startDate || new Date(startDate) < new Date(currentDate)) {
     errors.startDate = "The start date must be today or later.";
   }
@@ -498,9 +460,20 @@ router.post("/:spotId/bookings", requireAuth, async (req, res) => {
     errors.endDate = "The end date must be after the start date.";
   }
 
-  if (Object.keys(errors).length > 0) {
+  if (Object.keys(errors).length) {
     return res.status(400).json({ message: "Bad Request", errors });
   }
+  const spot = await Spot.findByPk(spotId);
+  if (!spot) {
+    res.status(404).json({ message: "spot could not be found" });
+  }
+  if (spot.ownerId === userId) {
+    return res.status(403).json({
+      message: "Forbidden",
+    });
+  }
+  const newStartDate = new Date(startDate)
+  const newEndDate = new Date(endDate)
 
   const booked = await Booking.findOne({
     where: {
@@ -508,18 +481,18 @@ router.post("/:spotId/bookings", requireAuth, async (req, res) => {
       [Op.or]: [
         {
           startDate: {
-            [Op.between]: [startDate, endDate],
+            [Op.between]: [newStartDate, newEndDate],
           },
         },
         {
           endDate: {
-            [Op.between]: [startDate, endDate],
+            [Op.between]: [newStartDate, newEndDate],
           },
         },
         {
           [Op.and]: [
-            { startDate: { [Op.lte]: startDate } },
-            { endDate: { [Op.gte]: endDate } },
+            { startDate: { [Op.lte]: newStartDate } },
+            { endDate: { [Op.gte]: newEndDate } },
           ],
         },
       ],

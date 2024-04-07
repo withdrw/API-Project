@@ -321,7 +321,7 @@ router.put("/:spotId", requireAuth, async (req, res) => {
     description,
     price,
   });
-  res.status(201).json(newSpot);
+  res.status(200).json(newSpot);
 });
 
 // start by finding a spot , create a spot image , assign its spot id to its current spot

@@ -119,54 +119,43 @@ router.put("/:bookingId", requireAuth, async (req, res) => {
     throw err;
   }
 
-  const getBookings = await Booking.findAll({
-    where: {
-      spotId: booking.spotId,
-    },
-  });
+  const newStartDate = new Date(startDate);
+  const newEndDate = new Date(endDate);
 
-  // loop through bookings
+    const booked = await Booking.findOne({
+      where: {
+        id : {[Op.ne]: bookingId},
+        spotId : booking.spotId,
+        [Op.or]: [
+          {
+            startDate: {
+              [Op.between]: [newStartDate, newEndDate],
+            },
+          },
+          {
+            endDate: {
+              [Op.between]: [newStartDate, newEndDate],
+            },
+          },
+          {
+            [Op.and]: [
+              { startDate: { [Op.lte]: newStartDate } },
+              { endDate: { [Op.gte]: newEndDate } },
+            ],
+          },
+        ],
+      },
+    });
+   if (booked) {
+     return res.status(403).json({
+       message: "Sorry, this spot is already booked for the specified dates",
+       errors: {
+         startDate: "Start date conflicts with an existing booking",
+         endDate: "End date conflicts with an existing booking",
+       },
+     });
+   }
 
-  for (let book of getBookings) {
-    // let firstDate = book.startDate;
-    // let lastDate = book.endDate;
-    if (book.id !== bookingId) {
-      if (
-        new Date(startDate) <= book.startDate &&
-        new Date(startDate) >= book.endDate
-      ) {
-        let err = new Error("Bad Request");
-        err.errors = {};
-        err.errors.startDate = "Start date conflicts with an existing booking";
-        err.status = 400;
-      }
-      if (new Date(endDate) >= book.startDate && new Date(endDate) <= book.endDate) {
-        let err = new Error("Bad Request")
-        err.errors = {};
-        err.errors.endDate = "End date conflicts with an existing booking";
-        err.status = 400;
-      }
-    } else {
-      // checking if start date is in the past
-      if (new Date(startDate) < new Date()) {
-        let err = new Error("Bad Request")
-        err.errors = {};
-        err.errors.startDate = "startDate cannot be in the past"(
-          (err.status = 400)
-        );
-      }
-      // checking if endDate is on or before startDate
-
-      if (new Date(endDate) <= new Date(startDate)) {
-        let err = new Error('Bad Request')
-        err.errors.endDate = "endDate cannot be or before startDate ";
-        err.status = 400;
-      }
-    }
-    if (err.status === 400) {
-      throw err;
-    }
-  }
   const updateBooking = await booking.update({
     startDate,
     endDate,
@@ -179,44 +168,31 @@ router.delete("/:bookingId", requireAuth, async (req, res) => {
   const { bookingId } = req.params;
   const userId = req.user.id;
 
-  const booking = await Booking.findByPk(bookingId);
-  if (booking.userId !== user.id) {
-    return res.status(404).json({
-      message: "Unauthorized. Booking does not belong to the current user",
-    });
-  }
+  const booking = await Booking.findByPk(bookingId, {
+    include: {
+      model: Spot,
+      attributes : ['ownerId']
+    }
 
+  });
   if (!booking) {
     return res.status(404).json({ message: "Booking couldn't be found" });
   }
 
-  const spot = await Spot.findByPk(booking.spotId);
-
-  if (!spot) {
-    return res
-      .status(404)
-      .json({ message: "Spot for the booking couldn't be found" });
-  }
-
-  if (userId === booking.userId || userId === spot.ownerId) {
-    const currentDate = new Date();
-    const bookingStartDate = new Date(booking.startDate);
-
-    if (bookingStartDate > currentDate) {
-      await booking.destroy();
-
-      return res.json({ message: "Successfully deleted" });
-    } else {
-      return res.status(403).json({
-        message: "Bookings that have been started cannot be deleted",
-      });
-    }
-  } else {
+  if (booking.userId !== userId) {
     return res.status(403).json({
-      message:
-        "Unauthorized - Booking does not belong to the current user or the Spot does not belong to the current user",
+      message: "Forbidden",
     });
   }
+  const realDate = new Date()
+
+  if (realDate >= new Date(booking.startDate)) {
+    return res.status(403).json({
+      message: "Bookings that have been started cannot be deleted",
+    });
+  }
+  await booking.destroy();
+  return res.json({ message: "Successfully deleted" });
 });
 
 module.exports = router;

@@ -41,16 +41,22 @@ router.get("/current", requireAuth , async (req, res) => {
           "name",
           "price",
         ],
-        include: [
-          {
-            model: SpotImage,
-            // where: { preview: true },
-            attributes: ["url"],
-          },
-        ],
+        include: SpotImage
       },
     ],
   });
+
+    const arr = [];
+    booking.forEach((ele) => {
+      const newBody = ele.toJSON();
+      const newArr = newBody.Spot.SpotImages;
+      for (let spot of newArr) {
+        if (spot.url !== null) newBody.Spot.previewImage = spot.url;
+        else newBody.Spot.previewImage = "preview does not exist";
+      }
+      delete newBody.Spot.SpotImages;
+      arr.push(newBody);
+    });
 
   res.status(200).json({ Bookings: booking });
 });

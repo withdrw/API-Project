@@ -54,9 +54,8 @@ router.get("/current", requireAuth, async (req, res) => {
   });
 
   const arr = []
-  firstReviews.forEach(ele => {
+  reviews.forEach(ele => {
     const newBody = ele.toJSON()
-
     const newArr = newBody.Spot.SpotImages
     for (let spot of newArr) {
       if (spot.url !== null) newBody.Spot.previewImage = spot.url

@@ -138,6 +138,7 @@ router.get("/current", requireAuth, async (req, res) => {
 
   res.json({ Spots: spots });
 });
+//Final Deployment
 router.get("/:spotId", async (req, res) => {
   const spotId = req.params.spotId;
   const newSpot = await Spot.findOne({

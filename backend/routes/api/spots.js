@@ -63,10 +63,10 @@ router.get("/", async (req, res, next) => {
   }
   if (Object.keys(errors).length > 0) {
     return res.status(400).json({
-       message: "Bad Request",
-       errors: errors,
-     });
-   }
+      message: "Bad Request",
+      errors: errors,
+    });
+  }
 
   // const spots = await Spot.findAll({
   //   limit: size,
@@ -85,9 +85,9 @@ router.get("/", async (req, res, next) => {
   for (const spot of spots) {
     //  console.log(spot)
     //  console.log(spot.dataValues.previewImage);
-    spot.lat = parseFloat(spot.lat)
-    spot.lng = parseFloat(spot.lng)
-    spot.price = parseFloat(spot.price)
+    spot.lat = parseFloat(spot.lat);
+    spot.lng = parseFloat(spot.lng);
+    spot.price = parseFloat(spot.price);
     if (!spot.dataValues.previewImage) {
       spot.dataValues.previewImage = "No image yet";
       spot.save();
@@ -107,9 +107,9 @@ router.get("/current", requireAuth, async (req, res) => {
   await newAvg(spots);
   await newImages(spots);
   for (const spot of spots) {
-     spot.dataValues.lat = parseFloat(spot.lat);
-     spot.dataValues.lng = parseFloat(spot.lng);
-     spot.dataValues.price = parseFloat(spot.price);
+    spot.dataValues.lat = parseFloat(spot.lat);
+    spot.dataValues.lng = parseFloat(spot.lng);
+    spot.dataValues.price = parseFloat(spot.price);
     if (!spot.dataValues.previewImage) {
       spot.dataValues.previewImage = "No Image Yet";
       spot.save();
@@ -136,9 +136,8 @@ router.get("/current", requireAuth, async (req, res) => {
   //   }
   // })
 
-  res.json({Spots : spots});
+  res.json({ Spots: spots });
 });
-
 router.get("/:spotId", async (req, res) => {
   const spotId = req.params.spotId;
   const newSpot = await Spot.findOne({
@@ -155,6 +154,9 @@ router.get("/:spotId", async (req, res) => {
         as: "Owner",
         attributes: ["id", "firstName", "lastName"],
       },
+      {
+        model: Review,
+      },
     ],
   });
   if (!newSpot) {
@@ -162,33 +164,27 @@ router.get("/:spotId", async (req, res) => {
     err.status = 404;
     throw err;
   }
-  const review = await Review.findAll({
-    where: {
-      spotId: spotId,
-    },
-  });
-  newSpot.dataValues.numReviews = review.length;
-  await newAvg(newSpot);
-  const payload = {
-    id: newSpot.id,
-    ownerId: newSpot.ownerId,
-    city: newSpot.city,
-    state: newSpot.state,
-    country: newSpot.country,
-    lat: newSpot.lat,
-    lng: newSpot.lng,
-    name: newSpot.name,
-    description: newSpot.description,
-    price: newSpot.price,
-    createdAt: newSpot.createdAt,
-    updatedAt: newSpot.updatedAt,
-    numReviews: newSpot.numReviews,
-    avgStarRating: newSpot.avgRating,
-    SpotImages: newSpot.SpotImages,
-    Owner : newSpot.Owner
+  // const review = await Review.findAll({
+  //   where: {
+  //     spotId: spotId,
+  //   },
+  // });
+  newSpot.dataValues.numReviews = Review.length;
+
+  const newObj = newSpot.toJSON();
+
+  let sum = 0;
+  for (let i = 0; i < newObj.Reviews.length; i++) {
+    sum += newObj.Reviews[i].stars;
   }
-  // await newAvg(newSpot)
-  res.json(payload);
+
+  let avg = sum / newObj.Reviews.length;
+
+  delete newObj.Reviews;
+
+  newObj.avgStarRating = avg;
+
+  res.json(newObj);
 });
 
 router.post("/", requireAuth, async (req, res, next) => {
@@ -251,9 +247,9 @@ router.post("/", requireAuth, async (req, res, next) => {
     description,
     price,
   });
-  lat: parseFloat(lat)
-  lng: parseFloat(lng)
-  price : parseFloat(price)
+  lat: parseFloat(lat);
+  lng: parseFloat(lng);
+  price: parseFloat(price);
   res.status(201).json(newSpot);
 });
 
@@ -274,13 +270,13 @@ router.post("/:spotId/images", requireAuth, async (req, res) => {
     throw err;
   }
 
-  const newImage = await SpotImage.create({ url, preview , spotId});
+  const newImage = await SpotImage.create({ url, preview, spotId });
   // console.log(newImage)
   const payload = {
-    id : newImage.id,
-    url : url,
-    preview: preview
-  }
+    id: newImage.id,
+    url: url,
+    preview: preview,
+  };
   res.status(200).json(payload);
 });
 
@@ -375,9 +371,9 @@ router.delete("/:spotId", requireAuth, async (req, res) => {
     throw err;
   }
   if (spot.ownerId !== req.user.id) {
-     return res.status(403).json({message: "Forbidden "});
+    return res.status(403).json({ message: "Forbidden " });
   }
-   await spot.destroy();
+  await spot.destroy();
   res.status(200).json({ message: "Successfully deleted" });
 });
 
@@ -410,7 +406,7 @@ router.get("/:spotId/reviews", async (req, res) => {
 
 router.post("/:spotId/reviews", requireAuth, async (req, res) => {
   const spotId = req.params.spotId;
-  const parsedSpotId = parseInt(spotId,10)
+  const parsedSpotId = parseInt(spotId, 10);
   const spot = await Spot.findByPk(parsedSpotId);
   let { review, stars } = req.body;
   const rev = await Review.findOne({
@@ -442,7 +438,7 @@ router.post("/:spotId/reviews", requireAuth, async (req, res) => {
 
   const createReview = await Review.create({
     userId: req.user.id,
-    spotId : parsedSpotId,
+    spotId: parsedSpotId,
     review,
     stars,
   });
@@ -509,8 +505,8 @@ router.post("/:spotId/bookings", requireAuth, async (req, res) => {
       message: "Forbidden",
     });
   }
-  const newStartDate = new Date(startDate)
-  const newEndDate = new Date(endDate)
+  const newStartDate = new Date(startDate);
+  const newEndDate = new Date(endDate);
 
   const booked = await Booking.findOne({
     where: {

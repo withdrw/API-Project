@@ -59,7 +59,7 @@ router.get("/current", requireAuth, async (req, res) => {
     ],
   });
 
-  res.status(200).json(reviews);
+  res.status(200).json({ Reviews : reviews });
 });
 
 /// EDIT A REVIEW

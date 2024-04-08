@@ -84,13 +84,16 @@ router.get("/", async (req, res, next) => {
   for (const spot of spots) {
     //  console.log(spot)
     //  console.log(spot.dataValues.previewImage);
+    spot.lat = parseFloat(spot.lat)
+    spot.lng = parseFloat(spot.lng)
+    spot.price = parseFloat(spot.price)
     if (!spot.dataValues.previewImage) {
       spot.dataValues.previewImage = "No image yet";
       spot.save();
     }
   }
 
-  res.json(spots, page, size);
+  res.json({ Spots: spots, page, size });
 });
 
 router.get("/current", requireAuth, async (req, res) => {
@@ -103,6 +106,9 @@ router.get("/current", requireAuth, async (req, res) => {
   await newAvg(spots);
   await newImages(spots);
   for (const spot of spots) {
+     spot.dataValues.lat = parseFloat(spot.lat);
+     spot.dataValues.lng = parseFloat(spot.lng);
+     spot.dataValues.price = parseFloat(spot.price);
     if (!spot.dataValues.previewImage) {
       spot.dataValues.previewImage = "No Image Yet";
       spot.save();
@@ -128,7 +134,8 @@ router.get("/current", requireAuth, async (req, res) => {
   //     avgRating: spot.avgRating,
   //   }
   // })
-  res.json(spots);
+
+  res.json({Spots : spots});
 });
 
 router.get("/:spotId", async (req, res) => {

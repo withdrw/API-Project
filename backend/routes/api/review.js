@@ -44,13 +44,7 @@ router.get("/current", requireAuth, async (req, res) => {
           "name",
           "price",
         ],
-        include: [
-          {
-            model: SpotImage,
-            // where: { preview: true },
-            attributes: ["url"],
-          },
-        ]
+        include: SpotImage
         },
         {
           model: ReviewImage,
@@ -58,6 +52,19 @@ router.get("/current", requireAuth, async (req, res) => {
         },
     ],
   });
+
+  const arr = []
+  firstReviews.forEach(ele => {
+    const newBody = ele.toJSON()
+
+    const newArr = newBody.Spot.SpotImages
+    for (let spot of newArr) {
+      if (spot.url !== null) newBody.Spot.previewImage = spot.url
+      else newBody.Spot.previewImage = 'preview does not exist'
+    }
+    delete newBody.Spot.SpotImages;
+    arr.push(newBody)
+  })
 
   res.status(200).json({ Reviews : reviews });
 });
@@ -138,14 +145,13 @@ router.post('/:reviewId/images', requireAuth, async(req, res) => {
       });
     }
 
-
   const allImages = await ReviewImage.count({
     where: {
       reviewId
     }
   })
-  if (allImages >= 10){
-    res.status(403).json({
+  if (allImages === 10){
+     return res.status(403).json({
       message: "Maximum number of images for this resource was reached"
     })
   }

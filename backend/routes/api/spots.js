@@ -47,8 +47,7 @@ async function newImages(spots) {
 
 router.get("/", async (req, res, next) => {
   let { page = 1, size = 20 } = req.query;
-  const err = new Error();
-  err.errors = {};
+  errors = {};
 
   page = parseInt(page);
   size = parseInt(size);
@@ -56,16 +55,18 @@ router.get("/", async (req, res, next) => {
   offset = (page - 1) * size;
 
   if (isNaN(page) || page < 1 || page > 10) {
-    err.errors.page("Page must be greater than or equal to 1");
-    err.status = 400;
-    throw err;
+    errors.page = "Page must be greater than or equal to 1";
   }
 
   if (isNaN(size) || size < 1 || size > 20) {
-    err.errors.size("Size must be greater than or equal to 1");
-    err.status = 400;
-    throw err;
+    errors.size = "Size must be greater than or equal to 1";
   }
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json({
+       message: "Bad Request",
+       errors: errors,
+     });
+   }
 
   // const spots = await Spot.findAll({
   //   limit: size,
@@ -167,14 +168,33 @@ router.get("/:spotId", async (req, res) => {
     },
   });
   newSpot.dataValues.numReviews = review.length;
-  res.json(newSpot);
+  await newAvg(spots);
+  const payload = {
+    id: newSpot.id,
+    ownerId: newSpot.ownerId,
+    city: newSpot.city,
+    state: newSpot.state,
+    country: newSpot.country,
+    lat: newSpot.lat,
+    lng: newSpot.lng,
+    name: newSpot.name,
+    description: newSpot.description,
+    price: newSpot.price,
+    createdAt: newSpot.createdAt,
+    updatedAt: newSpot.updatedAt,
+    numReviews: newSpot.numReviews,
+    avgStarRating: newSpot.avgRating,
+    SpotImages: newSpot.SpotImages,
+    Owner : newSpot.Owner
+  }
+  res.json(payload);
 });
 
 router.post("/", requireAuth, async (req, res, next) => {
-  const { address, city, state, country, lat, lng, name, description, price } =
+  let { address, city, state, country, lat, lng, name, description, price } =
     req.body;
 
-  const errors = {};
+  let errors = {};
 
   if (!address) {
     errors.address = "Street address is required";
@@ -218,7 +238,7 @@ router.post("/", requireAuth, async (req, res, next) => {
       errors: errors,
     });
   }
-  const newSpot = await Spot.create({
+  let newSpot = await Spot.create({
     ownerId: req.user.id,
     address,
     city,
@@ -230,6 +250,9 @@ router.post("/", requireAuth, async (req, res, next) => {
     description,
     price,
   });
+  lat: parseFloat(lat)
+  lng: parseFloat(lng)
+  price : parseFloat(price)
   res.status(201).json(newSpot);
 });
 
@@ -252,7 +275,12 @@ router.post("/:spotId/images", requireAuth, async (req, res) => {
 
   const newImage = await SpotImage.create({ url, preview , spotId});
   // console.log(newImage)
-  res.json(newImage);
+  const payload = {
+    id : newImage.id,
+    url : url,
+    preview: preview
+  }
+  res.status(200).json(payload);
 });
 
 router.put("/:spotId", requireAuth, async (req, res) => {

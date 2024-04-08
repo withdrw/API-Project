@@ -168,7 +168,7 @@ router.get("/:spotId", async (req, res) => {
     },
   });
   newSpot.dataValues.numReviews = review.length;
-  await newAvg(spots);
+  await newAvg(newSpot);
   const payload = {
     id: newSpot.id,
     ownerId: newSpot.ownerId,

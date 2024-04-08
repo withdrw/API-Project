@@ -168,27 +168,27 @@ router.get("/:spotId", async (req, res) => {
     },
   });
   newSpot.dataValues.numReviews = review.length;
-  // await newAvg(spots);
-  // const payload = {
-  //   id: newSpot.id,
-  //   ownerId: newSpot.ownerId,
-  //   city: newSpot.city,
-  //   state: newSpot.state,
-  //   country: newSpot.country,
-  //   lat: newSpot.lat,
-  //   lng: newSpot.lng,
-  //   name: newSpot.name,
-  //   description: newSpot.description,
-  //   price: newSpot.price,
-  //   createdAt: newSpot.createdAt,
-  //   updatedAt: newSpot.updatedAt,
-  //   numReviews: newSpot.numReviews,
-  //   avgStarRating: newSpot.avgRating,
-  //   SpotImages: newSpot.SpotImages,
-  //   Owner : newSpot.Owner
-  // }
-  await newAvg(newSpot)
-  res.json(newSpot);
+  await newAvg(spots);
+  const payload = {
+    id: newSpot.id,
+    ownerId: newSpot.ownerId,
+    city: newSpot.city,
+    state: newSpot.state,
+    country: newSpot.country,
+    lat: newSpot.lat,
+    lng: newSpot.lng,
+    name: newSpot.name,
+    description: newSpot.description,
+    price: newSpot.price,
+    createdAt: newSpot.createdAt,
+    updatedAt: newSpot.updatedAt,
+    numReviews: newSpot.numReviews,
+    avgStarRating: newSpot.avgRating,
+    SpotImages: newSpot.SpotImages,
+    Owner : newSpot.Owner
+  }
+  // await newAvg(newSpot)
+  res.json(payload);
 });
 
 router.post("/", requireAuth, async (req, res, next) => {

@@ -1,0 +1,31 @@
+.spot-details {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.spot-images {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 10px;
+}
+
+#mainImage {
+  grid-column: 1 / span 3;
+  grid-row: 1;
+}
+
+#smallImage {
+  height: 100px;
+}
+
+#calloutBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#reserve {
+  margin-top: 20px;
+}

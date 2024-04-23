@@ -8,9 +8,9 @@ function Navigation({ isLoaded }) {
 
   return (
     <ul>
-      <li>
-        <NavLink to="/">Home</NavLink>
-      </li>
+        <NavLink to="/">
+          <img src='/images/ferbnb.jpg'></img>
+        </NavLink>
       {isLoaded && (
         <li>
           <ProfileButton user={sessionUser} />

@@ -6,6 +6,10 @@ import { Outlet, createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation-bonus';
 import * as sessionActions from './store/session';
 import { Modal } from './context/Modal';
+import SpotDetails from './components/SpotDetails/SpotDetails';
+import ShowImages from './components/ShowImages/ShowImages';
+import CreateForm from './components/CreateSpot/CreateForm';
+// import ShowImages from './components/ShowImages/ShowImages';
 
 function Layout() {
   const dispatch = useDispatch();
@@ -21,6 +25,7 @@ function Layout() {
     <>
       <Modal/>
       <Navigation isLoaded={isLoaded} />
+
       {isLoaded && <Outlet />}
     </>
   );
@@ -32,16 +37,16 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <h1>Welcome!</h1>
+        element: <SpotDetails />
       },
-      // {
-      //   path: 'login',
-      //   element: <LoginFormPage />
-      // },
-      // {
-      //   path: 'signup',
-      //   element: <SignupFormPage />
-      // }
+      {
+        path: '/spots/:spotId',
+        element: <ShowImages/>
+      },
+      {
+        path: '/spots/new',
+        element: <CreateForm />
+      }
     ]
   }
 ]);

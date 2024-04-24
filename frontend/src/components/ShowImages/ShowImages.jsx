@@ -23,31 +23,30 @@ return (
         <h2>
           Location {spot.city}, {spot.state}, {spot.country}
         </h2>
-        <div id="newImages" >
-          <img id="mainImage" src={spot.SpotImages[0].url} alt="image 1" />
-          <img id="smallImage" src={spot.SpotImages[1].url} alt="image 2" />
-          <img id="smallImage" src={spot.SpotImages[2].url} alt="image 3" />
-          <img id="smallImage" src={spot.SpotImages[3].url} alt="image 4" />
-          <img id="smallImage" src={spot.SpotImages[4].url} alt="image 5" />
+        <div id="newImages">
+          {(spot.SpotImages ?? []).map((image, index) => (
+            <img
+              key={index}
+              id={`image_${index + 1}`}
+              src={image.url}
+              alt={`image ${index + 1}`}
+            />
+          ))}
         </div>
         <div>
           <p>
-            Hosted by:{spot.Owner.firstName} {spot.Owner.lastName}
+            Hosted by:{spot?.Owner?.firstName} {spot.Owner?.lastName}
           </p>
           <p>{spot.description}</p>
         </div>
         <div id="calloutBox">
           <p>${spot.price}.00 / Night</p>
-          <div>
-            {spot.numReviews}
-          </div>
+          <div>{spot.numReviews}</div>
           <button onClick={() => alert("Feature Coming Soon !")} id="reserve">
             Reserve
           </button>
         </div>
-        <div>
-          {spot.Reviews}
-        </div>
+        <div>{spot.Reviews}</div>
       </div>
     )}
   </div>

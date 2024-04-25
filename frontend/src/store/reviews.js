@@ -12,12 +12,12 @@ export const getReviews = (spotId) => async (dispatch) => {
   return res;
 };
 
-export const getCurrent = () => async (dispatch) => {
-  const res = await fetch(`/api/spots//reviews/current`);
-  const reviews = await res.json();
-  dispatch(loadReviews(reviews));
-  return res;
-};
+// export const getCurrent = () => async (dispatch) => {
+//   const res = await fetch(`/api/spots/reviews/current`);
+//   const reviews = await res.json();
+//   dispatch(loadReviews(reviews));
+//   return res;
+// };
 
 const reviewsReducer = (state = {}, action) => {
   switch (action.type) {

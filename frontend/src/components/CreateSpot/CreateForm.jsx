@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { useDispatch } from "react-redux"
-import { createNewSpot } from "../../store/spots"
-// import { useNavigate } from "react-router-dom"
+import { createNewSpot, getAllSpots } from "../../store/spots"
+import { useNavigate } from "react-router-dom"
 // import { getAllSpots } from "../../store/spots"
 
 function CreateForm() {
@@ -12,7 +12,7 @@ function CreateForm() {
     const [city, setCity] = useState("")
     const [state, setState] = useState("")
     const [address, setAddress] = useState("")
-    const [price, setPrice] = useState("")
+    const [price, setPrice] = useState(0)
     const [description, setDescription] = useState("")
     const [name, setName] = useState("")
     const [image1 ,setImage1] = useState("")
@@ -23,11 +23,11 @@ function CreateForm() {
     const dispatch = useDispatch()
     const [errors, setErrors] = useState({});
     // const [isLoaded, setIsLoaded] = useState(false);
-    // const navigate = useNavigate()
     // const spot = useSelector((state) => state.spots.spotById);
+    const navigate = useNavigate()
 
 
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
 
     let newErrors = {};
@@ -60,6 +60,7 @@ function CreateForm() {
 
 
     let images = [image1, image2, image3, image4, image5];
+
     const spotDetails = {
           country,
           address,
@@ -68,13 +69,21 @@ function CreateForm() {
           description,
           name,
           price,
-          images,
+      images,
+      lat: 1,
+      lng: 1,
+
       };
 
+    if (!Object.values(errors).length) {
 
-    const spotResponse = await dispatch(createNewSpot(spotDetails)).catch((error) => {
-      console.log(error)
-    });
+      const data =  await dispatch(createNewSpot(spotDetails))
+         await dispatch(getAllSpots())
+         navigate(`/spots/${data.id}`)
+
+
+
+      }
 
     // await Promise.all(
     //   images.map(async (image, index) => {
@@ -87,8 +96,7 @@ function CreateForm() {
     //     }
     //   })
     // );
-    console.log('================',spotResponse)
-    // navigate(`/spots/${spotResponse.id}`)
+    // console.log('================',spotResponse)
   };
     return (
       <div>
@@ -184,6 +192,7 @@ function CreateForm() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder={"Price per night (USD)"}
+                type="number"
               />
               <p>{errors.price}</p>
             </div>

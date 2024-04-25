@@ -63,39 +63,33 @@ export const getSpot = (spotId) => async (dispatch) => {
 // creating a new spot
 
 export const createNewSpot = (spotDetails) => async (dispatch) => {
+
   const response = await csrfFetch("/api/spots", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(spotDetails),
   });
 
-  console.log("=====================")
+
   if (response.ok) {
     let spot = await response.json();
-    if (spotDetails.images && spotDetails.images.length > 0) {
-      await Promise.all(
-        spotDetails.images.map(async (url, index) => {
-          if (url.trim() !== "") {
-            const imageResponse = await csrfFetch(`/api/spots/${spot.id}/images`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ url, preview: index === 0 }),
-            });
-            if (imageResponse.ok) {
-              const imageData = await imageResponse.json();
-              spot.SpotImages = spot.SpotImages || [];
-              spot.SpotImages.push(imageData);
-            }
-          }
-        })
-      );
-    }
-    dispatch(createNewSpot(spot));
+    // if (spotDetails.images && spotDetails.images.length > 0) {
+    //       // if (url.trim() !== "") {
+    //       //   const imageResponse = await csrfFetch(`/api/spots/${spot.id}/images`, {
+    //       //     method: "POST",
+    //       //     body: JSON.stringify({ url, preview: index === 0 }),
+    //       //   });
+    //       //   if (imageResponse.ok) {
+    //       //     const imageData = await imageResponse.json();
+    //       //     spot.SpotImages = spot.SpotImages || [];
+    //       //     spot.SpotImages.push(imageData);
+    //       //   }
+    //       // }
+    // }
+    dispatch(createSpots(spot));
     return spot;
   } else {
     const errors = await response.json();
+    console.error(errors)
     return errors
   }
 };
@@ -164,8 +158,7 @@ const spotsReducer = (state = initialState , action) => {
       case CREATE_SPOTS:
         return {
           ...state,
-          spot: state.spots,
-          [action.payload.id]: action.payload,
+          [action.payload.id] : action.payload,
         };
       case LOAD_SPOTS_USER: {
         const grabSpots = {};

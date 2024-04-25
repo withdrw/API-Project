@@ -3,12 +3,15 @@ import { useEffect, useState } from "react";
 import { getAllSpots } from "../../store/spots";
 import { useDispatch, useSelector } from "react-redux";
 import { getReviews } from "../../store/reviews";
+// import OpenModalButton from "../OpenModalButton/OpenModalButton";
 
 function ShowImages() {
   const { spotId } = useParams();
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
   const spot = useSelector((state) => state.spots.spotById);
+  // const reviews = useSelector((state) => state.reviews.reviews);
+  // const currUser = useSelector((state) => state.session.user?.id || 0);
 
   useEffect(() => {
     dispatch(getAllSpots(spotId)).then(() => {
@@ -42,9 +45,24 @@ function ShowImages() {
               Hosted by:{spot?.Owner?.firstName} {spot.Owner.lastName}
             </p>
             <p>{spot.description}</p>
-            {/* <div id="detail-reviews-header">{console.log(userReviews)} {spot.numReviews ? (spot.numReviews === 1 ? (<p>{spot.numReviews} Review ·
-{spot.avgStarRating.toFixed(1)} Average Stars</p>) : (<p>{spot.numReviews} Reviews · {spot.avgStarRating} Average Stars</p>)) : (<p>-- Average Stars</p>)}
-                            </div> */}
+            <div id="detail-reviews-header">
+              {spot.numReviews ? (
+                spot.numReviews === 1 ? (
+                  <p>
+                    {spot.numReviews} Review ·{spot.avgStarRating.toFixed(1)}{" "}
+                    Average Stars
+                  </p>
+                ) : (
+                  <p>
+                    {spot.numReviews} Reviews · {spot.avgStarRating} Average
+                    Stars
+                  </p>
+                )
+              ) : (
+                <p>-- Average Stars</p>
+              )}
+            </div>
+
           </div>
           <div id="calloutBox">
             <p>${spot.price}.00 / Night</p>
@@ -53,12 +71,14 @@ function ShowImages() {
               {spot.numReviews ? (
                 spot.numReviews === 1 ? (
                   <p>
-                    {spot.numReviews} Review{spot.avgStarRating.toFixed(1)}{""}
+                    {spot.numReviews} Review{spot.avgStarRating.toFixed(1)}
+                    {""}
                     Average Stars
                   </p>
                 ) : (
                   <p>
-                    {spot.numReviews} Reviews · {spot.avgStarRating.toFixed(1)}{""}
+                    {spot.numReviews} Reviews · {spot.avgStarRating.toFixed(1)}
+                    {""}
                     Average Stars
                   </p>
                 )

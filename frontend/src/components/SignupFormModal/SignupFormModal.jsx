@@ -15,31 +15,32 @@ function SignupFormModal() {
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (password === confirmPassword) {
-      setErrors({});
-      return dispatch(
-        sessionActions.signup({
-          email,
-          username,
-          firstName,
-          lastName,
-          password
-        })
-      )
-        .then(closeModal)
-        .catch(async (res) => {
-          const data = await res.json();
-          if (data?.errors) {
-            setErrors(data.errors);
-          }
-        });
-    }
-    return setErrors({
-      confirmPassword: "Confirm Password field must be the same as the Password field"
-    });
-  };
+const handleSubmit = (e) => {
+  e.preventDefault();
+  if (password === confirmPassword) {
+    setErrors({});
+    return dispatch(
+      sessionActions.signup({
+        email,
+        username,
+        firstName,
+        lastName,
+        password,
+      })
+    )
+      .then(closeModal)
+      .catch(async (res) => {
+        const data = await res.json();
+        if (data?.errors) {
+          setErrors(data.errors);
+        }
+      });
+  }
+  return setErrors({
+    confirmPassword:
+      "Confirm Password field must be the same as the Password field",
+  });
+};
 
   return (
     <>
@@ -105,7 +106,12 @@ function SignupFormModal() {
           />
         </label>
         {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-        <button type="submit">Sign Up</button>
+          {errors.email && <p>{errors.email}</p>}
+  {errors.username && <p>{errors.username}</p>}
+  {errors.firstName && <p>{errors.firstName}</p>}
+  {errors.lastName && <p>{errors.lastName}</p>}
+  {errors.password && <p>{errors.password}</p>}
+        <button disabled={!email ||  username.length < 4 || !firstName || !lastName || password.length < 6 || !confirmPassword } type="submit">Sign Up</button>
       </form>
     </>
   );

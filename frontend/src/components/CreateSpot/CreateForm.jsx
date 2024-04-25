@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useDispatch } from "react-redux"
-import { createSpots } from "../../store/spots"
+import { createNewSpot } from "../../store/spots"
 // import { useNavigate } from "react-router-dom"
 // import { getAllSpots } from "../../store/spots"
 
@@ -72,7 +72,9 @@ function CreateForm() {
       };
 
 
-    const spotResponse = await dispatch(createSpots(spotDetails));
+    const spotResponse = await dispatch(createNewSpot(spotDetails)).catch((error) => {
+      console.log(error)
+    });
 
     // await Promise.all(
     //   images.map(async (image, index) => {
@@ -85,7 +87,7 @@ function CreateForm() {
     //     }
     //   })
     // );
-    console.log('================',spotResponse.id)
+    console.log('================',spotResponse)
     // navigate(`/spots/${spotResponse.id}`)
   };
     return (

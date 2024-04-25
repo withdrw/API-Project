@@ -6,10 +6,18 @@ import { csrfFetch } from "./csrf"
 const GET_SPOTS = 'spots/GET_SPOTS'
 const GET_SPOTS_ID = 'spots/GET_SPOTS_ID'
 const CREATE_SPOTS = 'spots/CREATE_SPOTS'
+const GET_SPOT = 'spots/GET_SPOT'
+const LOAD_SPOTS_USER = 'spots/LOAD_SPOTS_USER'
+
 // const ADD_IMAGES = 'ADD_IMAGES'
 
 
 // ACTIONS
+
+export const userSpots = (spots) => ({
+  type: LOAD_SPOTS_USER,
+  payload : spots
+})
 
 export const getSpots = (spots) =>  ({
     type : GET_SPOTS,
@@ -23,15 +31,38 @@ export const createSpots = (spot) => ({
     type: CREATE_SPOTS,
     payload : spot
 })
-// export const addImage = (image) => ({
-//   type: ADD_IMAGES,
-//   payload : image
-// })
+export const fetchSingleSpot = (spotId) => ({
+  type: GET_SPOT,
+  payload : spotId
+})
 
 
 // THUNK
 
-export const createSpot = (spotDetails) => async (dispatch) => {
+// get the curr spots for user
+
+export const loadUser = () => async (dispatch) => {
+  const res = await csrfFetch('/api/spots/current')
+  const spots = await res.json()
+  dispatch(userSpots(spots))
+}
+
+
+// get SINGLE
+export const getSpot = (spotId) => async (dispatch) => {
+  try {
+    const response = await csrfFetch(`/api/spots/${spotId}`);
+    const spot = await response.json();
+    dispatch(fetchSingleSpot(spot));
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// creating a new spot
+
+export const createNewSpot = (spotDetails) => async (dispatch) => {
   const response = await csrfFetch("/api/spots", {
     method: "POST",
     headers: {
@@ -61,7 +92,7 @@ export const createSpot = (spotDetails) => async (dispatch) => {
         })
       );
     }
-    dispatch(createSpot(spot));
+    dispatch(createNewSpot(spot));
     return spot;
   } else {
     const errors = await response.json();
@@ -103,7 +134,10 @@ export const getAllSpots = (spotId) => async (dispatch) => {
 //REDUCERS
 
 const initialState = {
-    spots : {}
+  spots: {},
+  oneSpot: {SpotImages : []},
+  getAll : {}
+  // currentSpot: null
 }
 
 const spotsReducer = (state = initialState , action) => {
@@ -121,11 +155,25 @@ const spotsReducer = (state = initialState , action) => {
           spotById: action.payload,
         };
       }
+      case GET_SPOT: {
+        return {
+          ...state,
+          currentUser: action.payload,
+        };
+      }
       case CREATE_SPOTS:
-  return {
-    ...state,
-    spot: action.payload
-  };
+        return {
+          ...state,
+          spot: state.spots,
+          [action.payload.id]: action.payload,
+        };
+      case LOAD_SPOTS_USER: {
+        const grabSpots = {};
+        action.spots.forEach(spot => {
+          grabSpots[spot.id] = spot
+        })
+        return { getAll: { ...grabSpots }, oneSpot: { ...grabSpots } }
+      }
 
       default: {
         return state;

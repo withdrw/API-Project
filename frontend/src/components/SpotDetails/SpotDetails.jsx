@@ -22,7 +22,7 @@ function SpotDetails() {
 
 
   return (
-    <div className="SpotDetails">
+    <div className="NewSpotDetails">
     {isLoaded &&
       spots &&
       Object.values(spots).map(

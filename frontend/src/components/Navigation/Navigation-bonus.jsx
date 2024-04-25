@@ -9,7 +9,6 @@ function Navigation({ isLoaded }) {
   return (
     <ul>
         <NavLink to="/">
-          <img src='/images/ferbnb.jpg'></img>
         </NavLink>
       {isLoaded && (
         <li>

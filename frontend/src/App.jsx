@@ -8,7 +8,7 @@ import * as sessionActions from './store/session';
 import { Modal } from './context/Modal';
 import SpotDetails from './components/SpotDetails/SpotDetails';
 import ShowImages from './components/ShowImages/ShowImages';
-import CreateForm from './components/CreateSpot/CreateForm';
+import CreateForm from './components/CreateSpot/SpotForm';
 import ManageSpot from './components/ManageSpot/ManageSpot';
 import DeleteSpot from './components/ManageSpot/DeleteSpot';
 // import ShowImages from './components/ShowImages/ShowImages';
@@ -27,6 +27,7 @@ function Layout() {
     <>
       <Modal/>
       <Navigation isLoaded={isLoaded} />
+
 
       {isLoaded && <Outlet />}
     </>

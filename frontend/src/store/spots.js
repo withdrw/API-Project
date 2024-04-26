@@ -9,12 +9,33 @@ const CREATE_SPOTS = 'spots/CREATE_SPOTS'
 const GET_SPOT = 'spots/GET_SPOT'
 const LOAD_SPOTS_USER = 'spots/LOAD_SPOTS_USER'
 const EDIT_SPOTS = 'spots/EDIT_SPOTS'
-const DELETE_SPOT = "spots/DELETE_SPOT";
-
-// const ADD_IMAGES = 'ADD_IMAGES'
-
+const DELETE_SPOT = 'spots/DELETE_SPOT'
+const GET_REVIEWS = 'GET_REVIEWS';
+const CREATE_REVIEW = 'CREATE_REVIEW'
+const DELETE_REVIEW = 'DELETE_REVIEW';
+const ADD_IMAGES = 'ADD_IMAGES'
 
 // ACTIONS
+
+export const addImages = (image) => ({
+  type: ADD_IMAGES,
+  payload: image
+});
+
+export const deleteReview = (reviewId) => ({
+  type: DELETE_REVIEW,
+  payload: reviewId
+});
+
+export const spotReviews = (reviews) => ({
+  type: GET_REVIEWS,
+  payload: reviews
+});
+
+export const deleteSpot = (spotId) => ({
+  type: DELETE_SPOT,
+  payload: spotId
+})
 
 export const spotEdit = (spots) => ({
   type: EDIT_SPOTS,
@@ -43,57 +64,82 @@ export const fetchSingleSpot = (spotId) => ({
   payload : spotId
 })
 
-export const deleteSpot = (spotId) => ({
-  type: DELETE_SPOT,
-  payload: spotId,
+export const addReview = review => ({
+  type: CREATE_REVIEW,
+  payload: review
 });
 
 // THUNK
 
-export const spotDelete = (spotId) => async (dispatch) => {
-  const response = await csrfFetch(`/api/spots/${spotId}`, {
-    method: "DELETE",
-    // headers: { "Content-Type": "application/json" },
+export const spotImages = (imageInfo, spotId) => async (dispatch) => {
+  const response = await csrfFetch(`/api/spots/${spotId}/images`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(imageInfo)
   });
   if (response.ok) {
-    dispatch(deleteSpot(spotId));
+      const newImage = await response.json();
+      dispatch(addImages(newImage));
   }
-};
+}
 
+export const reviewDelete = (reviewId) => async(dispatch) =>{
+  const res = await csrfFetch(`/api/reviews/${reviewId}/`, {
+    method:'DELETE'
+  });
+  if(res.ok){
+    dispatch(deleteReview(reviewId))
+    return;
+}}
+
+export const createReview = (userReview, spotId) => async(dispatch) => {
+  const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
+      method: 'POST',
+      body: JSON.stringify(userReview)
+  })
+  if(res.ok){
+      const newReview = await res.json()
+      dispatch(addReview(newReview))
+  }
+}
+
+export const fetchReviews = (spotId) => async(dispatch) => {
+  const res = await fetch(`/api/spots/${spotId}/reviews`)
+  const reviews = await res.json()
+  dispatch(spotReviews(reviews))
+}
+
+export const spotDelete = (spotId) => async (dispatch) => {
+  const response = await csrfFetch(`/api/spots/${spotId}`, {
+      method: 'DELETE'
+  });
+  if (response.ok) {
+      dispatch(deleteSpot(spotId));
+  }
+}
 
 export const updateSpot = (spot) => async (dispatch) => {
-  // await dispatch(getAllSpots());
-  const res = await csrfFetch(`/api/spots/${spot.id}`, {  // passing spot.id but it didnt exist in spotDetails see createForm line 117
+  const res = await csrfFetch(`/api/spots/${spot.id}`, {
     method: "PUT",
     body: JSON.stringify(spot),
   });
+
     if (res.ok) {
       const spotUpdated = await res.json();
       dispatch(spotEdit(spotUpdated));
+      console.log("in updateSpot")
       return spotUpdated;
     } else {
       console.log("first")
     }
 };
 
-
-// delete spot
-// export const spotDelete = (spotId) => async (dispatch) => {
-//   await csrfFetch(`/api/spots/${spotId}`, {
-//     method: "DELETE",
-//   });
-//   await dispatch(getAllSpots());
-//   return;
-// };
-
 // get the curr spots for user
-
 export const loadUser = () => async (dispatch) => {
   const res = await csrfFetch('/api/spots/current')
   const spots = await res.json()
   dispatch(userSpots(spots))
 }
-
 
 // get SINGLE
 export const getSpot = (spotId) => async (dispatch) => {
@@ -101,21 +147,19 @@ export const getSpot = (spotId) => async (dispatch) => {
     const response = await csrfFetch(`/api/spots/${spotId}`);
     const spot = await response.json();
     dispatch(fetchSingleSpot(spot));
-    return spot;
+    return response;
   } catch (error) {
     console.log(error);
   }
 };
 
 // creating a new spot
-
 export const createNewSpot = (spotDetails) => async (dispatch) => {
 
   const response = await csrfFetch("/api/spots", {
     method: "POST",
     body: JSON.stringify(spotDetails),
   });
-
 
   if (response.ok) {
     let spot = await response.json();
@@ -141,7 +185,6 @@ export const createNewSpot = (spotDetails) => async (dispatch) => {
   }
 };
 
-
 // export const addImageForSpot = (images, spotId) => async (dispatch) => {
 //   const response = await csrfFetch(`/api/spots/${spotId}/images`, {
 //     method: "POST",
@@ -158,7 +201,6 @@ export const createNewSpot = (spotDetails) => async (dispatch) => {
 //   }
 // }
 export const getAllSpots = (spotId) => async (dispatch) => {
-
     if (!spotId) {
         const response =  await csrfFetch("/api/spots");
         const spots = await response.json()
@@ -173,12 +215,10 @@ export const getAllSpots = (spotId) => async (dispatch) => {
 }
 
 //REDUCERS
-
 const initialState = {
   spots: {},
   oneSpot: {SpotImages : []},
   getAll : {}
-  // currentSpot: null
 }
 
 const spotsReducer = (state = initialState , action) => {
@@ -205,26 +245,34 @@ const spotsReducer = (state = initialState , action) => {
       case CREATE_SPOTS:
         return {
           ...state,
-          [action.payload.id]: action.payload,
-        };
-      // case LOAD_SPOTS_USER: {
-      //   const grabSpots = {};
-      //   action.spots.forEach(spot => {
-      //     grabSpots[spot.id] = spot
-      //   })
-      //   return { getAll: { ...grabSpots }, oneSpot: { ...grabSpots } }
-      // }
-      case LOAD_SPOTS_USER: {
+          [action.payload.id] : action.payload,
+        }
+
+      case LOAD_SPOTS_USER : {
         return {
           ...state,
-          ["current"]: action.payload,
+          ['current']: action.payload
         };
       }
-      // case EDIT_SPOTS: {
-      //   const newState = { ...state };
-      //   newState.allSpots[action.payload.id] = action.payload;
-      //   return newState;
-      // }
+      case GET_REVIEWS: {
+        const newState = {...state};
+        const allReviews = action.payload.Reviews
+        newState.reviews = allReviews
+        return newState
+      }
+      case CREATE_REVIEW: {
+        const newState = {...state}
+
+      return newState
+      }
+      case ADD_IMAGES: {
+        return {...state, ...action.image}
+    }
+    //   case DELETE_REVIEW : {
+    //     const newState = {...state};
+    //     delete newState[action.reveiwId];
+    //     return newState;
+    //  }
       default: {
         return state;
       }

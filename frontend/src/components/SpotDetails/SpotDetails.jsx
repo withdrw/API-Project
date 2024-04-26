@@ -38,8 +38,13 @@ function SpotDetails() {
               {/* <p className="spot-description"> {spot.description}</p> */}
               <p className="spot-city">{spot.city}</p>
               <p className="spot-city">{spot.state}</p>
-              <p className="spot-price">{`$${spot.price}.00`}</p>
-              <p className="spot-rating">★ {Number.isInteger(spot.avgRating) ? spot.avgRating.toFixed(1) : spot.avgRating}</p>
+              <p className="spot-price">{`$${spot.price}.00`} / Night </p>
+              {/* <p className="spot-rating">★ {Number.isInteger(spot.avgRating) ? spot.avgRating.toFixed(1) : spot.avgRating}</p> */}
+<p className="spot-rating">
+                    ★ {spot.avgRating ?
+                    (Number.isInteger(spot.avgRating) ? spot.avgRating.toFixed(1) : spot.avgRating)
+                    : "New"}
+              </p>
             </NavLink>
           ),
         )}

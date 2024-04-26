@@ -18,10 +18,10 @@ const DeleteSpot = ({ spotId }) => {
       <h1>Confirm Delete</h1>
       <p>Are you sure you want to remove this spot from the listings?</p>
       <button type='"button' onClick={handleDelete}>
-        Delete Spot{" "}
+        Yes (Delete Spot){" "}
       </button>
       <button type="button" onClick={() => closeModal()}>
-        No Keep Spot
+        No (Keep Spot)
       </button>
     </div>
   );

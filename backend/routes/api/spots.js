@@ -172,7 +172,8 @@ router.get("/:spotId", async (req, res) => {
   // });
   newSpot.dataValues.numReviews = Review.length;
 
-  const newObj = newSpot.toJSON();
+  const newObj = newSpot.toJSON()
+  newObj.numReviews = newSpot.Reviews.length;
 
   let sum = 0;
   for (let i = 0; i < newObj.Reviews.length; i++) {
@@ -251,6 +252,7 @@ router.post("/", requireAuth, async (req, res, next) => {
   lat: parseFloat(lat);
   lng: parseFloat(lng);
   price: parseFloat(price);
+  console.log(newSpot)
   res.status(201).json(newSpot);
 });
 

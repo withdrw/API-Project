@@ -8,11 +8,17 @@ const GET_SPOTS_ID = 'spots/GET_SPOTS_ID'
 const CREATE_SPOTS = 'spots/CREATE_SPOTS'
 const GET_SPOT = 'spots/GET_SPOT'
 const LOAD_SPOTS_USER = 'spots/LOAD_SPOTS_USER'
+const EDIT_SPOTS = 'spots/EDIT_SPOTS'
 
 // const ADD_IMAGES = 'ADD_IMAGES'
 
 
 // ACTIONS
+
+export const spotEdit = (spots) => ({
+  type: EDIT_SPOTS,
+  payload : spots
+})
 
 export const userSpots = (spots) => ({
   type: LOAD_SPOTS_USER,
@@ -38,6 +44,23 @@ export const fetchSingleSpot = (spotId) => ({
 
 
 // THUNK
+
+export const updateSpot = (spot) => async (dispatch) => {
+  // await dispatch(getAllSpots());
+  const res = await csrfFetch(`/api/spots/${spot.id}`, {
+    method: "PUT",
+    body: JSON.stringify(spot),
+  });
+
+    if (res.ok) {
+      const spotUpdated = await res.json(); // Await the response before dispatching
+      dispatch(spotEdit(spotUpdated));
+      return spotUpdated; // Return the updated spot data
+    } else {
+      console.log("first")
+    }
+};
+
 
 // get the curr spots for user
 
@@ -159,15 +182,20 @@ const spotsReducer = (state = initialState , action) => {
         return {
           ...state,
           [action.payload.id] : action.payload,
+        }
+      // case LOAD_SPOTS_USER: {
+      //   const grabSpots = {};
+      //   action.spots.forEach(spot => {
+      //     grabSpots[spot.id] = spot
+      //   })
+      //   return { getAll: { ...grabSpots }, oneSpot: { ...grabSpots } }
+      // }
+      case LOAD_SPOTS_USER : {
+        return {
+          ...state,
+          ['current']: action.payload
         };
-      case LOAD_SPOTS_USER: {
-        const grabSpots = {};
-        action.spots.forEach(spot => {
-          grabSpots[spot.id] = spot
-        })
-        return { getAll: { ...grabSpots }, oneSpot: { ...grabSpots } }
       }
-
       default: {
         return state;
       }

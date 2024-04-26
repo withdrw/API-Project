@@ -39,6 +39,11 @@ function ProfileButton({ user }) {
     navigate("/")
   };
 
+  const spotManage = (e) => {
+    e.preventDefault()
+    navigate('/spots/current')
+    closeMenu()
+  }
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
   return (
@@ -54,6 +59,9 @@ function ProfileButton({ user }) {
             <li>{user.email}</li>
             <li>
               <button onClick={logout}>Log Out</button>
+            </li>
+            <li>
+              <button onClick={spotManage}>ManageSpots</button>
             </li>
           </>
         ) : (

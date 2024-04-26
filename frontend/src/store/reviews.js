@@ -1,3 +1,5 @@
+import { csrfFetch } from "./csrf";
+
 const SHOW_REVIEW = "SHOW_REVIEW";
 
 export const loadReviews = (reviews) => ({
@@ -6,18 +8,18 @@ export const loadReviews = (reviews) => ({
 });
 
 export const getReviews = (spotId) => async (dispatch) => {
-  const res = await fetch(`/api/spots/${spotId}/reviews`);
+  const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
   const reviews = await res.json();
   dispatch(loadReviews(reviews));
   return res;
 };
 
-// export const getCurrent = () => async (dispatch) => {
-//   const res = await fetch(`/api/spots/reviews/current`);
-//   const reviews = await res.json();
-//   dispatch(loadReviews(reviews));
-//   return res;
-// };
+export const getCurrent = () => async (dispatch) => {
+  const res = await fetch(`/api/spots/reviews/current`);
+  const reviews = await res.json();
+  dispatch(loadReviews(reviews));
+  return res;
+};
 
 const reviewsReducer = (state = {}, action) => {
   switch (action.type) {

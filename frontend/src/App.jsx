@@ -9,6 +9,7 @@ import { Modal } from './context/Modal';
 import SpotDetails from './components/SpotDetails/SpotDetails';
 import ShowImages from './components/ShowImages/ShowImages';
 import CreateForm from './components/CreateSpot/CreateForm';
+import ManageSpot from './components/ManageSpot/ManageSpot';
 // import ShowImages from './components/ShowImages/ShowImages';
 
 function Layout() {
@@ -36,19 +37,27 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: '/',
-        element: <SpotDetails />
+        path: "/",
+        element: <SpotDetails />,
       },
       {
-        path: '/spots/:spotId',
-        element: <ShowImages/>
+        path: "/spots/:spotId",
+        element: <ShowImages />,
       },
       {
-        path: '/spots/new',
-        element: <CreateForm />
-      }
-    ]
-  }
+        path: "/spots/new",
+        element: <CreateForm />,
+      },
+      {
+        path: "/spots/current",
+        element: <ManageSpot />,
+      },
+      {
+        path: "/spots/:spotId/edit",
+        element: <CreateForm />,
+      },
+    ],
+  },
 ]);
 
 function App() {

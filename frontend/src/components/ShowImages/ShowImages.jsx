@@ -42,7 +42,7 @@ function ShowImages() {
           </div>
           <div>
             <p>
-              Hosted by:{spot?.Owner?.firstName} {spot.Owner.lastName}
+              Hosted by:{spot?.Owner?.firstName} {spot?.Owner?.lastName}
             </p>
             <p>{spot.description}</p>
             <div id="detail-reviews-header">

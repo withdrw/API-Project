@@ -10,6 +10,7 @@ import SpotDetails from './components/SpotDetails/SpotDetails';
 import ShowImages from './components/ShowImages/ShowImages';
 import CreateForm from './components/CreateSpot/CreateForm';
 import ManageSpot from './components/ManageSpot/ManageSpot';
+import DeleteSpot from './components/ManageSpot/DeleteSpot';
 // import ShowImages from './components/ShowImages/ShowImages';
 
 function Layout() {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: "/spots/:spotId/edit",
         element: <CreateForm />,
+      },
+      {
+        path: "/spots/:spotId/delete",
+        element: <DeleteSpot />,
       },
     ],
   },

@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getAllSpots } from "../../store/spots";
 import { useDispatch, useSelector } from "react-redux";
-import { getReviews } from "../../store/reviews";
+import { getReviews } from "../../store/spots";
 // import OpenModalButton from "../OpenModalButton/OpenModalButton";
 
 function ShowImages() {
@@ -45,7 +45,7 @@ function ShowImages() {
               Hosted by:{spot?.Owner?.firstName} {spot?.Owner?.lastName}
             </p>
             <p>{spot.description}</p>
-            <div id="detail-reviews-header">
+            <div id="review">
               {spot.numReviews ? (
                 spot.numReviews === 1 ? (
                   <p>

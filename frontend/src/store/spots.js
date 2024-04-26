@@ -9,6 +9,7 @@ const CREATE_SPOTS = 'spots/CREATE_SPOTS'
 const GET_SPOT = 'spots/GET_SPOT'
 const LOAD_SPOTS_USER = 'spots/LOAD_SPOTS_USER'
 const EDIT_SPOTS = 'spots/EDIT_SPOTS'
+const DELETE_SPOT = "spots/DELETE_SPOT";
 
 // const ADD_IMAGES = 'ADD_IMAGES'
 
@@ -42,25 +43,48 @@ export const fetchSingleSpot = (spotId) => ({
   payload : spotId
 })
 
+export const deleteSpot = (spotId) => ({
+  type: DELETE_SPOT,
+  payload: spotId,
+});
 
 // THUNK
 
+export const spotDelete = (spotId) => async (dispatch) => {
+  const response = await csrfFetch(`/api/spots/${spotId}`, {
+    method: "DELETE",
+    // headers: { "Content-Type": "application/json" },
+  });
+  if (response.ok) {
+    dispatch(deleteSpot(spotId));
+  }
+};
+
+
 export const updateSpot = (spot) => async (dispatch) => {
   // await dispatch(getAllSpots());
-  const res = await csrfFetch(`/api/spots/${spot.id}`, {
+  const res = await csrfFetch(`/api/spots/${spot.id}`, {  // passing spot.id but it didnt exist in spotDetails see createForm line 117
     method: "PUT",
     body: JSON.stringify(spot),
   });
-
     if (res.ok) {
-      const spotUpdated = await res.json(); // Await the response before dispatching
+      const spotUpdated = await res.json();
       dispatch(spotEdit(spotUpdated));
-      return spotUpdated; // Return the updated spot data
+      return spotUpdated;
     } else {
       console.log("first")
     }
 };
 
+
+// delete spot
+// export const spotDelete = (spotId) => async (dispatch) => {
+//   await csrfFetch(`/api/spots/${spotId}`, {
+//     method: "DELETE",
+//   });
+//   await dispatch(getAllSpots());
+//   return;
+// };
 
 // get the curr spots for user
 
@@ -77,7 +101,7 @@ export const getSpot = (spotId) => async (dispatch) => {
     const response = await csrfFetch(`/api/spots/${spotId}`);
     const spot = await response.json();
     dispatch(fetchSingleSpot(spot));
-    return response;
+    return spot;
   } catch (error) {
     console.log(error);
   }
@@ -181,8 +205,8 @@ const spotsReducer = (state = initialState , action) => {
       case CREATE_SPOTS:
         return {
           ...state,
-          [action.payload.id] : action.payload,
-        }
+          [action.payload.id]: action.payload,
+        };
       // case LOAD_SPOTS_USER: {
       //   const grabSpots = {};
       //   action.spots.forEach(spot => {
@@ -190,12 +214,17 @@ const spotsReducer = (state = initialState , action) => {
       //   })
       //   return { getAll: { ...grabSpots }, oneSpot: { ...grabSpots } }
       // }
-      case LOAD_SPOTS_USER : {
+      case LOAD_SPOTS_USER: {
         return {
           ...state,
-          ['current']: action.payload
+          ["current"]: action.payload,
         };
       }
+      // case EDIT_SPOTS: {
+      //   const newState = { ...state };
+      //   newState.allSpots[action.payload.id] = action.payload;
+      //   return newState;
+      // }
       default: {
         return state;
       }

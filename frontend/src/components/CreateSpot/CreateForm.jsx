@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { createNewSpot, getAllSpots, getSpot, updateSpot } from "../../store/spots"
+import { createNewSpot, getSpot, updateSpot } from "../../store/spots"
 import { useNavigate, useParams } from "react-router-dom"
 // import { getAllSpots } from "../../store/spots"
 
@@ -12,7 +12,7 @@ function CreateForm() {
     const [city, setCity] = useState("")
     const [state, setState] = useState("")
     const [address, setAddress] = useState("")
-    const [price, setPrice] = useState("")
+    const [price, setPrice] = useState(0)
     const [description, setDescription] = useState("")
     const [name, setName] = useState("")
     const [image1 ,setImage1] = useState("")
@@ -32,18 +32,20 @@ function CreateForm() {
   useEffect(() => {
     if (spotId) {
       dispatch(getSpot(spotId)).then((spot) => {
-        setAddress(spot.address || "");
-        setCity(spot.city || "");
-        setState(spot.state || "");
-        setCountry(spot.country || "");
-        setName(spot.name || "");
-        setDescription(spot.description || "");
-        setPrice(spot.price || "");
+        console.log('--------------------------->', spot)
+        setAddress(spot.address);
+        setCity(spot.city);
+        setState(spot.state);
+        setCountry(spot.country);
+        setName(spot.name);
+        setDescription(spot.description);
+        setPrice(spot.price);
         setFormType("update");
         setIsLoaded(true);
+        // console.log("State after setting:", { country, city, state, address, price, description, name });
       });
     } else {
-      dispatch(getAllSpots()).then(() => {
+      dispatch(getSpot()).then(() => {
         setAddress("");
         setCity("");
         setState("");
@@ -79,8 +81,6 @@ console.log("------------------------------",getSpot(spotId))
     if (!image4) newErrors.image4 = 'Image 4 is required';
     if (!image5) newErrors.image5 = 'Image 5 is required';
     setErrors(newErrors);
-
-
     if (Object.keys(newErrors).length === 0) {
       const images = [image1, image2, image3, image4, image5].filter(url => url.trim() !== "");
       if (images.length === 0) {
@@ -113,7 +113,8 @@ console.log("------------------------------",getSpot(spotId))
       } else if (
         formType === "update"
       ) {
-         const spotDetails = {
+        const spotDetails = {
+           id : spotId, // didnt exist , after add
            country,
            address,
            city,
@@ -457,7 +458,7 @@ return (
             </button>
           </>
         ) : (
-          <button id="create-spot-btn" type="submit">
+          <button id="btn" type="submit">
             Update Your Spot
           </button>
         )}

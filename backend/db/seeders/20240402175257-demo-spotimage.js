@@ -24,102 +24,102 @@ module.exports = {
     await SpotImage.bulkCreate([
       {
         spotId: 1,
-        url: "/bird7.jpg",
+        url: "/preview2.jpg",
         preview: true,
       },
       {
         spotId: 1,
-        url: "/bird3.jpg",
+        url: "/Preview1.jpg",
         preview: false,
       },
       {
         spotId: 1,
-        url: "/bird3.jpg",
+        url: "/main1.jpg",
         preview: false,
       },
       {
         spotId: 1,
-        url: "/bird3.jpg",
+        url: "/main2.jpg",
         preview: false,
       },
       {
         spotId: 1,
-        url: "/bird3.jpg",
+        url: "/main3.jpg",
         preview: false,
       },
       {
         spotId: 2,
-        url: "/bird2.jpg",
+        url: "/Preview3.jpg",
         preview: true,
       },
       {
         spotId: 2,
-        url: "/bird4.jpg",
+        url: "/main5.jpg",
         preview: false,
       },
       {
         spotId: 2,
-        url: "/bird4.jpg",
+        url: "/main4.jpg",
         preview: false,
       },
       {
         spotId: 2,
-        url: "/bird4.jpg",
+        url: "/main6.jpg",
         preview: false,
       },
       {
         spotId: 2,
-        url: "/bird4.jpg",
+        url: "/main7.jpg",
         preview: false,
       },
       {
         spotId: 3,
-        url: "/bird3.jpg",
+        url: "/Preview4.jpg",
         preview: true,
       },
       {
         spotId: 3,
-        url: "image url",
+        url: "/main8.jpg",
         preview: false,
       },
       {
         spotId: 3,
-        url: "image url",
+        url: "/main9.jpg",
         preview: false,
       },
       {
         spotId: 3,
-        url: "image url",
+        url: "/main10.jpg",
         preview: false,
       },
       {
         spotId: 3,
-        url: "image url",
+        url: "/main11.jpg",
         preview: false,
       },
       {
         spotId: 4,
-        url: "image url",
+        url: "/Preview5.jpg",
         preview: true,
       },
       {
         spotId: 4,
-        url: "image url",
+        url: "/main12.jpg",
         preview: false,
       },
       {
         spotId: 4,
-        url: "image url",
+        url: "/main13.jpg",
         preview: false,
       },
       {
         spotId: 4,
-        url: "image url",
+        url: "/main14.jpg",
         preview: false,
       },
       {
         spotId: 4,
-        url: "image url",
+        url: "/main15.jpg",
         preview: false,
       },
       {
@@ -147,8 +147,7 @@ module.exports = {
         url: "image url",
         preview: false,
       },
-    ],
-    );
+    ]);
   },
 
   async down(queryInterface, Sequelize) {

@@ -33,6 +33,16 @@
 #reserve {
   margin-top: 20px;
 }
+
+.callout-container {
+  position: relative;
+  height: 270px;
+  width: 470px;
+  padding-right: 40px;
+  margin-top: -50px; /* Adjust as needed to move it up */
+  margin-left: auto; /* Move it to the right */
+}
+
 .calloutBox {
   display: flex;
   flex-direction: column;
@@ -46,17 +56,8 @@
   width: 400px;
   height: 200px;
   justify-content: flex-start;
-  position: absolute;
-  top: 50%;
-  right: 50px;
-  transform: translateY(-50%);
 }
 
-
-.callout-container {
-  position: relative;
-  height: 100vh;
-}
 
 .stars-group {
   display: flex;
@@ -65,12 +66,7 @@
 .star {
   font-size: 30px;
   cursor: pointer;
-  margin-right: 5px; /* Add margin between stars /
-}
-
-.review-modal {
-  border-radius: 10px;
-  / Add any other styles you need /
+  margin-right: 5px; /* Add margin between stars */
 }
 
 #modal-content {
@@ -79,14 +75,14 @@
 }
 .review {
   border-radius: 10px;
-  / Add any other styles you need /
+  /* Add any other styles you need */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .review-area {
-  width: 80%; / Adjust width as needed /
-   / Adjust margin-top to move it up */
+  width: 80%; /* Adjust width as needed */
+   /* Adjust margin-top to move it up */
 }
 
 .review-form-header {
@@ -109,4 +105,69 @@
   border-bottom: 2px;
   border-right: 2px;
 
+}
+
+.review-modal {
+  border-radius: 10px;
+  /* Add any other styles you need */
+}
+
+.spotImages-container {
+  display: flex;
+  justify-content: flex-start; /* Align items to the start (left) */
+  align-items: flex-start; /* Align items to the start (top) */
+}
+
+.image-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.preview-image {
+  width: 600px;
+  height: auto;
+}
+
+.image-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.preview-image {
+  width: 400px;
+  height: auto;
+  height: 400px;
+}
+
+#preview {
+  width: 400px;
+  height: 400px;
+}
+
+.other-images {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 400px;
+  width: 400px;
+  padding-left: 20px;
+}
+
+.other-image {
+  width: calc(50% - 5px); /* Adjust for grid gap */
+  margin-bottom: 10px; /* Adjust for grid gap */
+  position: relative; /* Ensure relative positioning */
+  height: 190px;
+  padding-left: 5px;
+  padding-top: 3px;
+}
+
+#small-image {
+  width: 195px;
+  height: 195px;
+}
+
+.spot-images-name {
+  text-align: center;
 }

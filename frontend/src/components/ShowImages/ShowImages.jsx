@@ -29,20 +29,42 @@ function ShowImages() {
     <div className="page-container">
       <div className="spotImages-container">
         {isLoaded && spot && (
-          <div>
+          <div className="main">
             <h1 className="spot-images-name">{spot.name}</h1>
             <h2>
               Location {spot.city}, {spot.state}, {spot.country}
             </h2>
-            <div id="newImages">
-              {(spot.SpotImages ?? []).map((image, index) => (
+            {/* <div className="image-grid">
+              <div className="preview-image">
+                <img id="preview" src={spot.SpotImages[0].url} alt={`image 1`} />
+              </div>
+              <div className="other-images">
+                {spot.SpotImages.slice(1).map((image, index) => (
+                  <div key={index} className="other-image">
+                    <img id= "side" src={image.url} alt={`image ${index + 2}`} />
+                  </div>
+                ))}
+              </div>
+            </div> */}
+            <div className="image-grid">
+              <div className="preview-image">
                 <img
-                  key={index}
-                  id={`image_${index + 1}`}
-                  src={image.url}
-                  alt={`image ${index + 1}`}
+                  id="preview"
+                  src={spot.SpotImages[0].url}
+                  alt={`image 1`}
                 />
-              ))}
+              </div>
+              <div className="other-images">
+                {spot.SpotImages.slice(1, 5).map((image, index) => (
+                  <div key={index} className="other-image">
+                    <img
+                      id="small-image"
+                      src={image.url}
+                      alt={`image ${index + 2}`}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div>
@@ -69,13 +91,10 @@ function ShowImages() {
               </div>
 
               <div className="review-list">
-                {/* {!reviews.length && !currUser && <p>Be the first to post a review!</p>} */}
                 {(!reviews || !reviews.length) && !currUser && (
                   <p>Be the first to post a review!</p>
                 )}
-                {/* {currUser && spot?.Owner && currUser.id !== spot.Owner.id && reviews && !reviews.find((obj) => obj.userId === currUser.id) && (
-                  <OpenModalButton buttonText="Post Your Review" modalComponent={<ReviewFormModal spotId={spot.id} />} />
-                )} */}
+
                 {currUser &&
                   spot?.Owner &&
                   currUser.id !== spot.Owner.id &&
@@ -136,7 +155,7 @@ function ShowImages() {
               {spot.numReviews ? (
                 spot.numReviews === 1 ? (
                   <p>
-                    {spot.numReviews} Review{spot.avgStarRating.toFixed(1)}{" "}
+                    {spot.numReviews} Review · ★ {spot.avgStarRating.toFixed(1)}{" "}
                     Average Stars
                   </p>
                 ) : (

@@ -30,19 +30,54 @@ async function newAvg(spots) {
   }
 }
 
+// async function newImages(spots) {
+//   const preImage = spots;
+//   for (const viewImage of preImage) {
+//     const images = await SpotImage.findAll({
+//       where: {
+//         id: viewImage.id,
+//         preview: true,
+//       },
+//     });
+//     if (images.length > 0 && images[0].dataValues) {
+//       viewImage.dataValues.previewImage = images[0].dataValues.url;
+//     }
+//   }
+// }
+
+// async function newImages(spots) {
+//   for (const viewImage of spots) {
+//     const images = await SpotImage.findAll({
+//       where: {
+//         id: viewImage.id,
+//         preview: true,
+//       },
+//     });
+//     if (images.length > 0 && images[0].dataValues) {
+//       viewImage.dataValues.previewImage = images[0].dataValues.url;
+//     }
+//   }
+//   return spots; // Return the updated spots array
+// }
+
 async function newImages(spots) {
-  const preImage = spots;
-  for (const viewImage of preImage) {
+  for (const viewImage of spots) {
     const images = await SpotImage.findAll({
       where: {
-        id: viewImage.id,
+        spotId: viewImage.dataValues.id,
         preview: true,
       },
     });
-    if (images.length > 0 && images[0].dataValues) {
+    if (images.length === 0) {
+      //viewImage.dataValues.previewImage = images[0].dataValues.url;
+      viewImage.dataValues.previewImage = null;
+    } else {
+      // If no preview image found, set previewImage to "No image yet"
+      //viewImage.dataValues.previewImage = "No image yet";
       viewImage.dataValues.previewImage = images[0].dataValues.url;
     }
   }
+  return spots; // Return the updated spots array
 }
 
 router.get("/", async (req, res, next) => {
@@ -68,31 +103,24 @@ router.get("/", async (req, res, next) => {
     });
   }
 
-  // const spots = await Spot.findAll({
-  //   limit: size,
-  //   offset: offset,
-  // });
-  // await avgStars(spots);
-  // await findPrevImg(spots);
-  // res.json({ Spots: spots, page, size });
-
   const spots = await Spot.findAll({
     limit: size,
     offset: offset,
   });
   await newAvg(spots);
   await newImages(spots);
-  for (const spot of spots) {
-    //  console.log(spot)
-    //  console.log(spot.dataValues.previewImage);
-    spot.lat = parseFloat(spot.lat);
-    spot.lng = parseFloat(spot.lng);
-    spot.price = parseFloat(spot.price);
-    if (!spot.dataValues.previewImage) {
-      spot.dataValues.previewImage = "No image yet";
-      spot.save();
-    }
-  }
+  // for (const spot of spots) {
+  //   //  console.log(spot)
+  //   //  console.log(spot.dataValues.previewImage);
+  //   spot.lat = parseFloat(spot.lat);
+  //   spot.lng = parseFloat(spot.lng);
+  //   spot.price = parseFloat(spot.price);
+  //   if (!spot.dataValues.previewImage) {
+  //     spot.dataValues.previewImage = "No image yet";
+  //     spot.save();
+  //   }
+  // }
+  //res.json({ Spots: spots, page, size });
 
   res.json({ Spots: spots, page, size });
 });
@@ -106,36 +134,20 @@ router.get("/current", requireAuth, async (req, res) => {
   });
   await newAvg(spots);
   await newImages(spots);
-  for (const spot of spots) {
-    spot.dataValues.lat = parseFloat(spot.lat);
-    spot.dataValues.lng = parseFloat(spot.lng);
-    spot.dataValues.price = parseFloat(spot.price);
-    if (!spot.dataValues.previewImage) {
-      spot.dataValues.previewImage = "No Image Yet";
-      spot.save();
-    }
-  }
-  // const payload = spots.map(spot => {
-  //  let avg = newAvg(spot)
-  //   newImages(spot)
-  //   console.log(spot)
-  //    return {
-  //     id: spot.id,
-  //     ownerId: spot.ownerId,
-  //     address: spot.address,
-  //     city: spot.city,
-  //     country: spot.country,
-  //     lat: spot.lat,
-  //     lng: spot.lng,
-  //     name: spot.name,
-  //     description: spot.description,
-  //     price: spot.price,
-  //     createdAt: spot.createdAt,
-  //     updatedAt: spot.updatedAt,
-  //     avgRating: spot.avgRating,
+  // for (let i = 0; i < spots.length; i++) {
+  //   spots[i].dataValues.lat = parseFloat(spots[i].lat);
+  //   spots[i].dataValues.lng = parseFloat(spots[i].lng);
+  //   spots[i].dataValues.price = parseFloat(spots[i].price);
+  // }
+  // for (const spot of spots) {
+  //   spot.dataValues.lat = parseFloat(spot.lat);
+  //   spot.dataValues.lng = parseFloat(spot.lng);
+  //   spot.dataValues.price = parseFloat(spot.price);
+  //   if (!spot.dataValues.previewImage) {
+  //     spot.dataValues.previewImage = "No Image Yet";
+  //     spot.save();
   //   }
-  // })
-
+  // }
   res.json({ Spots: spots });
 });
 //Final Deployment
@@ -172,7 +184,7 @@ router.get("/:spotId", async (req, res) => {
   // });
   newSpot.dataValues.numReviews = Review.length;
 
-  const newObj = newSpot.toJSON()
+  const newObj = newSpot.toJSON();
   newObj.numReviews = newSpot.Reviews.length;
 
   let sum = 0;
@@ -252,7 +264,7 @@ router.post("/", requireAuth, async (req, res, next) => {
   lat: parseFloat(lat);
   lng: parseFloat(lng);
   price: parseFloat(price);
-  console.log(newSpot)
+  console.log(newSpot);
   res.status(201).json(newSpot);
 });
 
@@ -273,12 +285,16 @@ router.post("/:spotId/images", requireAuth, async (req, res) => {
     throw err;
   }
 
-  const newImage = await SpotImage.create({ url, preview, spotId });
+  const newImage = await SpotImage.create({
+    spotId: spotId,
+    url: url,
+    preview: preview,
+  });
   // console.log(newImage)
   const payload = {
     id: newImage.id,
-    url: url,
-    preview: preview,
+    url: newImage.url,
+    preview: newImage.preview,
   };
   res.status(200).json(payload);
 });

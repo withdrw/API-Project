@@ -31,7 +31,7 @@ function SpotDetails() {
                 <img
                   className="spot-image"
                   id="previewImage"
-                  src={spot.previewImage}
+                  src={`${spot.previewImage}`}
                   alt={`${spot.name} Preview Image`}
                 />
                 <p className="spot-city">{spot.city}</p>

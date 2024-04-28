@@ -5,6 +5,7 @@ import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
 import { useNavigate } from 'react-router-dom';
+import ferbProfile from '/FerbnbProfileButton.png'
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
@@ -48,20 +49,22 @@ function ProfileButton({ user }) {
 
   return (
     <>
-      <button onClick={toggleMenu}>
-        <i className="fas fa-user-circle" />
+      <button className= "profile-button" onClick={toggleMenu}>
+        {/* <i className="fas fa-user-circle" /> */}
+        <img src={ferbProfile} className='fas-fa-user-circle' />
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user ? (
           <>
             <li>{user.username}</li>
-            <li>{user.firstName} {user.lastName}</li>
+            <li>Hello {user.firstName} {user.lastName}</li>
             <li>{user.email}</li>
+            <p></p>
             <li>
-              <button onClick={logout}>Log Out</button>
+              <button className='profile-menu-button' onClick={logout}>Log Out</button>
             </li>
             <li>
-              <button onClick={spotManage}>ManageSpots</button>
+              <button className='profile-menu-button' onClick={spotManage}>ManageSpots</button>
             </li>
           </>
         ) : (

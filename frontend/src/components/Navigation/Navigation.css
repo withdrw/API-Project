@@ -1,7 +1,99 @@
-.profile-dropdown {
-  position: absolute;
-}
-
 .hidden {
   display: none;
+}
+
+.profile-dropdown {
+  position: absolute;
+  border: 1px;
+  right: 0;
+  margin-top: 70px;
+  line-height: 25px;
+  list-style-type: none;
+  background-color: white;
+  /* z-index: 10; */
+  width: 150px;
+  padding-inline-start: 0px;
+  text-align: right;
+}
+
+.ferbnb-logo {
+  width: 60px;
+  height: auto;
+  background-color: #ffffff;
+}
+
+.navigation-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 50px;
+  z-index: 1000;
+  border-bottom: 2px solid black;
+  background-color: #ffffff;
+}
+.img {
+  background-color: #ffffff; /* Set the background color of the image container */
+}
+
+.left-items {
+  flex: 1;
+}
+
+.right-items {
+  flex: 2;
+  display: flex;
+  justify-content: flex-end;
+}
+.right-navigation {
+  display: flex;
+  /* align-items: center; */
+  padding-right: 4rem;
+  border:rgba(248, 248, 248, 0.35)
+}
+
+.create-new-spot{
+  padding-right: 2rem;
+  padding-top: 10px;
+}
+
+.fas-fa-user-circle{
+  width: 30px;
+  height: auto;
+  border-radius:200%;
+  padding-top: 10px;
+}
+.profile-button{
+
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.profile-dropdown > li:not(:last-child) {
+  border-bottom: 1px solid #ccc; /* Add a border to all li elements except the last one */
+}
+
+.profile-menu-button {
+    border-top: 0px;
+    border-left: 0px;
+    border-bottom: 0px;
+    border-right: 0px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.profile-menu-button:hover {
+  background-color: aliceblue;
+  border-color: black;
+  border-top: 2px;
+  border-left: 2px;
+  border-bottom: 2px;
+  border-right: 2px;
+
 }

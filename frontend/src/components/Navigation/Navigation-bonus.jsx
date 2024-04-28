@@ -2,30 +2,33 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ProfileButton from "./ProfileButton-bonus";
 import "./Navigation.css";
+import ferbnb from "/ferbnb.png";
 
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector((state) => state.session.user);
 
   return (
-    <ul className="navigation-container">
-      <li>
-        <NavLink to="/">Home</NavLink>
-      </li>
-      {isLoaded && (
-        <>
-          <li>
+    <nav className="navigation-container">
+      <div className="img">
+        <NavLink to="/">
+          <img className="ferbnb-logo" src={ferbnb} alt="ferbnb logo"></img>
+        </NavLink>
+      </div>
+      <div className="right-navigation">
+        <div className="create-new-spot">
+          {sessionUser && (
+            <NavLink to="/spots/new">
+              <button className="create-spot-link">Create a New Spot</button>
+            </NavLink>
+          )}
+        </div>
+        {isLoaded && (
+          <>
             <ProfileButton user={sessionUser} />
-          </li>
-          <li>
-            {sessionUser && (
-              <NavLink to="/spots/new">
-                <button className="create-spot-link">Create a New Spot</button>
-              </NavLink>
-            )}
-          </li>
-        </>
-      )}
-    </ul>
+          </>
+        )}
+      </div>
+    </nav>
   );
 }
 

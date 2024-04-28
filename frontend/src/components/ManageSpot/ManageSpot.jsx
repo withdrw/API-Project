@@ -18,9 +18,9 @@ function ManageSpots() {
     });
   }, [dispatch]);
 
-  const createNewSpot = () => {
-    navigate("/spots/new");
-  };
+  // const createNewSpot = () => {
+  //   navigate("/spots/new");
+  // };
   const updatingSpot = (spotId) => {
     navigate(`/spots/${spotId}/edit`)
   }
@@ -29,38 +29,45 @@ function ManageSpots() {
   return (
     <div>
       <h1>Manage Spots</h1>
-      {isLoaded && spots.Spots.length ? (
+      {isLoaded && spots && spots.Spots && spots.Spots.length ? (
         spots.Spots.map((spot) => (
-          <div key={spot.id}>
-            <NavLink key={spot.id} to={`/spots/${spot.id}`}>
-              <div>
+          <div key={spot.id} className="edit-spots">
+            <NavLink
+              className="spot-tile"
+              key={spot.id}
+              to={`/spots/${spot.id}`}
+            >
+              <div className="tooltip">
                 <img
+                  className="preview-img"
                   key={spot.id}
                   src={spot.previewImage}
                   alt={`${spot.previewImage}`}
                 />
-                <h2 key={spot.name}>{spot.name}</h2>
+                <h2 key={spot.name} className="name">
+                  {spot.name}
+                </h2>
               </div>
-              <div></div>
-              <p key={spot.city}>{`${spot.city}, ${spot.state}`}</p>
-              <p key={spot.rating}>
-                <b>
-                  {" "}
-                  {`${
-                    spot.avgRating !== undefined
-                      ? Number.isInteger(spot.avgRating)
-                        ? spot.avgRating.toFixed(1)
-                        : spot.avgRating
-                      : "New"
-                  }`}
-                </b>
-              </p>
-              <p key={spot.price}>
-                <b>{`$${spot.price}`}</b> <p>/ night</p>
+              <div id="reviews"></div>
+              <p
+                key={spot.city}
+                className="location"
+              >{`${spot.city}, ${spot.state}`}</p>
+              {spot.avgRating !== null && spot.avgRating !== undefined && (
+                <p key={spot.rating} className="rating">
+                  <b className="rating-nums">{`${
+                    Number.isInteger(spot.avgRating)
+                      ? spot.avgRating.toFixed(1)
+                      : spot.avgRating
+                  }`}</b>
+                </p>
+              )}
+              <p key={spot.price} className="price">
+                <b>{`$${spot.price}`}</b> <b>/ night</b>
               </p>
             </NavLink>
             <div>
-              <button onClick={() => updatingSpot(spot.id)}>Edit</button>
+              <button onClick={() => updatingSpot(spot.id)}>Update</button>
             </div>
             <OpenModalButton
               buttonText="Delete"
@@ -69,9 +76,7 @@ function ManageSpots() {
           </div>
         ))
       ) : (
-        <button className="signup" onClick={createNewSpot}>
-          New Spot
-        </button>
+        <NavLink to="/spots/new">Create a New Spot</NavLink>
       )}
     </div>
   );

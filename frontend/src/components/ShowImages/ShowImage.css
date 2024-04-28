@@ -5,6 +5,10 @@
   align-items: center;
 }
 
+.spot-card{
+  background-color: beige;
+}
+
 .spot-images {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -28,4 +32,81 @@
 
 #reserve {
   margin-top: 20px;
+}
+.calloutBox {
+  display: flex;
+  flex-direction: column;
+  border: 2px none black;
+  padding: 35px 35px;
+  border-radius: 8px;
+  gap: 20px;
+  box-shadow: 0px 3px 20px lightgray;
+  transition: box-shadow 0.3s ease;
+  background-color: white;
+  width: 400px;
+  height: 200px;
+  justify-content: flex-start;
+  position: absolute;
+  top: 50%;
+  right: 50px;
+  transform: translateY(-50%);
+}
+
+
+.callout-container {
+  position: relative;
+  height: 100vh;
+}
+
+.stars-group {
+  display: flex;
+}
+
+.star {
+  font-size: 30px;
+  cursor: pointer;
+  margin-right: 5px; /* Add margin between stars /
+}
+
+.review-modal {
+  border-radius: 10px;
+  / Add any other styles you need /
+}
+
+#modal-content {
+  width: 500px;
+  border-radius: 10px;
+}
+.review {
+  border-radius: 10px;
+  / Add any other styles you need /
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.review-area {
+  width: 80%; / Adjust width as needed /
+   / Adjust margin-top to move it up */
+}
+
+.review-form-header {
+  text-align: center;
+}
+
+.button-submit {
+  border-top: 0px;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  background-color: white;
+  cursor: pointer;
+}
+.button-submit:hover {
+  background-color: aliceblue;
+  border-color: black;
+  border-top: 2px;
+  border-left: 2px;
+  border-bottom: 2px;
+  border-right: 2px;
+
 }

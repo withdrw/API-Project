@@ -1,6 +1,6 @@
 import { useModal } from "../../context/Modal";
 import { useDispatch } from "react-redux";
-import { reviewDelete, fetchReviews } from "../../store/spots";
+import { reviewDelete, fetchReviews, getAllSpots } from "../../store/spots";
 
 const DeleteReviewModal = ({ reviewId, spotId }) => {
   const { closeModal } = useModal();
@@ -12,7 +12,7 @@ const DeleteReviewModal = ({ reviewId, spotId }) => {
     console.log(spotId);
     await dispatch(reviewDelete(reviewId));
     await dispatch(fetchReviews(spotId));
-    // await dispatch(getAllSpots(spotId));
+    await dispatch(getAllSpots(spotId));
     await closeModal();
   };
   return (

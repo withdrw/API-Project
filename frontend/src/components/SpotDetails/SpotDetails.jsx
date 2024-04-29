@@ -34,6 +34,7 @@ function SpotDetails() {
                   src={`${spot.previewImage}`}
                   alt={`${spot.name} Preview Image`}
                 />
+                <div className="all-card">
                 <p className="spot-city">{spot.city}</p>
                 <p className="spot-city">{spot.state}</p>
                 <p className="spot-price">{`$${spot.price}.00`} / Night</p>
@@ -41,10 +42,11 @@ function SpotDetails() {
                   ★{" "}
                   {spot.avgRating
                     ? Number.isInteger(spot.avgRating)
-                      ? spot.avgRating.toFixed(1)
-                      : spot.avgRating
+                    ? spot.avgRating.toFixed(1)
+                    : spot.avgRating
                     : "New"}
                 </p>
+                    </div>
               </NavLink>
             )
         )}

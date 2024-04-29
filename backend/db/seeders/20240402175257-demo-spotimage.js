@@ -124,27 +124,27 @@ module.exports = {
       },
       {
         spotId: 5,
-        url: "image url",
+        url: "/BIRDMAIN3.jpg",
         preview: true,
       },
       {
         spotId: 5,
-        url: "image url",
+        url: "/BirdMAIN1.jpg",
         preview: false,
       },
       {
         spotId: 5,
-        url: "image url",
+        url: "/BirdMAIN2.jpg",
         preview: false,
       },
       {
         spotId: 5,
-        url: "image url",
+        url: "/MAIN.jpg",
         preview: false,
       },
       {
         spotId: 5,
-        url: "image url",
+        url: "/BirdMain.jpg",
         preview: false,
       },
     ]);

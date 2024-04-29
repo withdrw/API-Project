@@ -59,7 +59,7 @@ const handleSubmit = (e) => {
         {errors.email && <p>{errors.email}</p>}
         <label>
           <input
-            placeholder=''
+            placeholder='Username'
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}

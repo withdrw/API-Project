@@ -1,4 +1,43 @@
-.manage-spot-heading {
-    padding-top: 80px;
-    text-align: center;
+.main-container{
+    display: flex;
+    gap: 20px;
+    padding-top: 100px;
+    max-width: 1000px;
+
 }
+.preview-img{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    width: 300px;
+    height: inherit;
+}
+.edit-spots{
+    line-height: 20px;
+    background-color: rgba(74, 160, 113, 0.459);
+    border-radius: 4px;
+    text-decoration: none;
+    text-align: center;
+    width: 400px;
+    border: 2px solid black;
+    width: 30%;
+    margin-bottom: 20px;
+}
+.edit-spots:hover{
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+.spot-tile{
+    text-decoration: none;
+    color: black;
+}
+
+/* .spots {
+    display: flex;
+    padding-top: 10px;
+} */
+
+.spots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }

@@ -4,6 +4,7 @@ import { loadUser } from "../../store/spots";
 import {  NavLink, useNavigate } from "react-router-dom";
 import DeleteSpot from "./DeleteSpot";
 import OpenModalButton from '../OpenModalButton'
+import './ManageSpot.css'
 
 
 function ManageSpots() {
@@ -27,8 +28,9 @@ function ManageSpots() {
 
 
   return (
-    <div>
+    <div className="heading">
       <h1>Manage Spots</h1>
+      <div className="spots">
       {isLoaded && spots && spots.Spots && spots.Spots.length ? (
         spots.Spots.map((spot) => (
           <div key={spot.id} className="edit-spots">
@@ -36,14 +38,14 @@ function ManageSpots() {
               className="spot-tile"
               key={spot.id}
               to={`/spots/${spot.id}`}
-            >
+              >
               <div className="tooltip">
                 <img
                   className="preview-img"
                   key={spot.id}
                   src={spot.previewImage}
                   alt={`${spot.previewImage}`}
-                />
+                  />
                 <h2 key={spot.name} className="name">
                   {spot.name}
                 </h2>
@@ -52,32 +54,34 @@ function ManageSpots() {
               <p
                 key={spot.city}
                 className="location"
-              >{`${spot.city}, ${spot.state}`}</p>
+                >{`${spot.city}, ${spot.state}`}</p>
               {spot.avgRating !== null && spot.avgRating !== undefined && (
                 <p key={spot.rating} className="rating">
-                  <b className="rating-nums">{`${
-                    Number.isInteger(spot.avgRating)
+                    ★<b className="rating-nums">{`${
+                      Number.isInteger(spot.avgRating)
                       ? spot.avgRating.toFixed(1)
                       : spot.avgRating
-                  }`}</b>
+                    }`}</b>
                 </p>
               )}
               <p key={spot.price} className="price">
                 <b>{`$${spot.price}`}</b> <b>/ night</b>
               </p>
             </NavLink>
-            <div>
+            <div className="updateBtn">
               <button onClick={() => updatingSpot(spot.id)}>Update</button>
             </div>
             <OpenModalButton
+              className="modalClass"
               buttonText="Delete"
               modalComponent={<DeleteSpot spotId={spot.id} />}
-            />
+              />
           </div>
         ))
       ) : (
         <NavLink to="/spots/new">Create a New Spot</NavLink>
       )}
+      </div>
     </div>
   );
 }

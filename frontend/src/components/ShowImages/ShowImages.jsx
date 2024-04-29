@@ -34,39 +34,31 @@ function ShowImages() {
             <h2>
               Location {spot.city}, {spot.state}, {spot.country}
             </h2>
-            {/* <div className="image-grid">
-              <div className="preview-image">
-                <img id="preview" src={spot.SpotImages[0].url} alt={`image 1`} />
-              </div>
-              <div className="other-images">
-                {spot.SpotImages.slice(1).map((image, index) => (
-                  <div key={index} className="other-image">
-                    <img id= "side" src={image.url} alt={`image ${index + 2}`} />
-                  </div>
-                ))}
-              </div>
-            </div> */}
             <div className="image-grid">
               <div className="preview-image">
-                <img
-                  id="preview"
-                  src={spot.SpotImages[0].url}
-                  alt={`image 1`}
-                />
+                {spot.SpotImages && spot.SpotImages.length > 0 && (
+                  <img
+                    id="preview"
+                    src={spot.SpotImages[0].url}
+                    alt={`image 1`}
+                  />
+                )}
               </div>
               <div className="other-images">
-                {spot.SpotImages.slice(1, 5).map((image, index) => (
-                  <div key={index} className="other-image">
-                    <img
-                      id="small-image"
-                      src={image.url}
-                      alt={`image ${index + 2}`}
-                    />
-                  </div>
-                ))}
+                {spot.SpotImages &&
+                  spot.SpotImages.slice(1, 5).map((image, index) => (
+                    <div key={index} className="other-image">
+                      {image && image.url && (
+                        <img
+                          id="small-image"
+                          src={image.url}
+                          alt={`image ${index + 2}`}
+                        />
+                      )}
+                    </div>
+                  ))}
               </div>
             </div>
-
             <div>
               <p>
                 Hosted by: {spot?.Owner?.firstName} {spot?.Owner?.lastName}
@@ -155,7 +147,7 @@ function ShowImages() {
               {spot.numReviews ? (
                 spot.numReviews === 1 ? (
                   <p>
-                    {spot.numReviews} Review · ★ {spot.avgStarRating.toFixed(1)}{" "}
+                    {spot.numReviews} Review{spot.avgStarRating.toFixed(1)}{" "}
                     Average Stars
                   </p>
                 ) : (

@@ -1,6 +1,6 @@
 import { useState, useEffect} from 'react';
 import { useDispatch } from 'react-redux';
-import { createReview, fetchReviews } from "../../store/spots";
+import { createReview, fetchReviews, getAllSpots } from "../../store/spots";
 //import { getAllSpots } from "../../store/spots";
 import { useModal } from '../../context/Modal';
 
@@ -25,14 +25,14 @@ const ReviewFormModal = ({spotId}) => {
         setStars(star);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const reviewUser = {review, stars}
-        await dispatch(createReview(reviewUser, spotId))
-        await dispatch(fetchReviews(spotId));
-        closeModal()
-    };
-
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const reviewUser = { review, stars };
+  await dispatch(createReview(reviewUser, spotId));
+  await dispatch(fetchReviews(spotId));
+  await dispatch(getAllSpots(spotId));
+  closeModal();
+};
     const arrOfStars = [1,2,3,4,5]
 
     return (

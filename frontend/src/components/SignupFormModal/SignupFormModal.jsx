@@ -107,7 +107,6 @@ const handleSubmit = (e) => {
           />
         </label>
         {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-          {errors.email && <p>{errors.email}</p>}
   {errors.username && <p>{errors.username}</p>}
   {errors.firstName && <p>{errors.firstName}</p>}
   {errors.lastName && <p>{errors.lastName}</p>}

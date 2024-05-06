@@ -147,7 +147,7 @@ function ShowImages() {
               {spot.numReviews ? (
                 spot.numReviews === 1 ? (
                   <p>
-                    {spot.numReviews} Review{spot.avgStarRating.toFixed(1)}{" "}
+                    {spot.numReviews} Review · ★{spot.avgStarRating.toFixed(1)}{" "}
                     Average Stars
                   </p>
                 ) : (
@@ -160,7 +160,11 @@ function ShowImages() {
                 <p>Average Stars</p>
               )}
             </div>
-
+              <div className="review-list">
+  {(!reviews || !reviews.length) && !currUser && (
+    <p>Be the first to post a review!</p>
+              )}
+              </div>
             {currUser && (
               <button
                 className="reserve-button"

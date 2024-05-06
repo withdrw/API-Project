@@ -17,27 +17,26 @@
 }
 
 .ferbnb-logo {
-  width: 60px;
+  width: 80px;
   height: auto;
-  background-color: #ffffff;
+  background: transparent;
 }
 
 .navigation-container {
+  position: sticky;
+  background: rgb(80,200,120);
+background: linear-gradient(0deg, rgba(80,200,120,1) 0%, rgba(255,255,255,1) 100%);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  position: absolute;
   top: 0;
   width: 100%;
-  height: 50px;
+  height: 80px;
   z-index: 1000;
   border-bottom: 2px solid black;
-  background-color: #ffffff;
 }
-.img {
-  background-color: #ffffff; /* Set the background color of the image container */
-}
+
 
 .left-items {
   flex: 1;
@@ -96,4 +95,12 @@
   border-bottom: 2px;
   border-right: 2px;
 
+
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.ferbnb-logo:hover {
+  animation: spin 1s linear;
 }

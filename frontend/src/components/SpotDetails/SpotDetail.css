@@ -70,21 +70,20 @@
 }
 
 .NewSpotDetails{
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
   padding-top: 100px;
   align-items: center;
-  width: 1050px;
 }
 .all-card{
   text-align: center;
 }
-.NewSpotDetails {
-  display: flex;
-  flex-wrap: wrap;
-}
+
 
 .spot-card {
+  width: 100px;
   flex-basis: calc(30% - 20px);
-  margin: 10px;
 }
 
 @media (max-width: 768px) {

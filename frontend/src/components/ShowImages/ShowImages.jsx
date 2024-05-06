@@ -164,6 +164,7 @@ function ShowImages() {
   {(!reviews || !reviews.length) && !currUser && (
     <p>Be the first to post a review!</p>
               )}
+              
               </div>
             {currUser && (
               <button

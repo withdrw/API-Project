@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useModal } from '../../context/Modal';
-import * as sessionActions from '../../store/session';
-import './SignupForm.css';
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useModal } from "../../context/Modal";
+import * as sessionActions from "../../store/session";
+import "./SignupForm.css";
 
 function SignupFormModal() {
   const dispatch = useDispatch();
@@ -15,41 +15,40 @@ function SignupFormModal() {
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  if (password === confirmPassword) {
-    setErrors({});
-    return dispatch(
-      sessionActions.signup({
-        email,
-        username,
-        firstName,
-        lastName,
-        password,
-      })
-    )
-      .then(closeModal)
-      .catch(async (res) => {
-        const data = await res.json();
-        if (data?.errors) {
-          setErrors(data.errors);
-        }
-      });
-  }
-  return setErrors({
-    confirmPassword:
-      "Confirm Password field must be the same as the Password field",
-  });
-};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (password === confirmPassword) {
+      setErrors({});
+      return dispatch(
+        sessionActions.signup({
+          email,
+          username,
+          firstName,
+          lastName,
+          password,
+        })
+      )
+        .then(closeModal)
+        .catch(async (res) => {
+          const data = await res.json();
+          if (data?.errors) {
+            setErrors(data.errors);
+          }
+        });
+    }
+    return setErrors({
+      confirmPassword:
+        "Confirm Password field must be the same as the Password field",
+    });
+  };
 
   return (
     <>
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
         <label>
-
           <input
-            placeholder='Email'
+            placeholder="Email"
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -59,7 +58,7 @@ const handleSubmit = (e) => {
         {errors.email && <p>{errors.email}</p>}
         <label>
           <input
-            placeholder='Username'
+            placeholder="Username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -69,7 +68,7 @@ const handleSubmit = (e) => {
         {errors.username && <p>{errors.username}</p>}
         <label>
           <input
-            placeholder='First Name'
+            placeholder="First Name"
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
@@ -79,7 +78,7 @@ const handleSubmit = (e) => {
         {errors.firstName && <p>{errors.firstName}</p>}
         <label>
           <input
-            placeholder='Last Name'
+            placeholder="Last Name"
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
@@ -89,7 +88,7 @@ const handleSubmit = (e) => {
         {errors.lastName && <p>{errors.lastName}</p>}
         <label>
           <input
-            placeholder='Password'
+            placeholder="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -99,7 +98,7 @@ const handleSubmit = (e) => {
         {errors.password && <p>{errors.password}</p>}
         <label>
           <input
-            placeholder='Confirm Password'
+            placeholder="Confirm Password"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -107,11 +106,23 @@ const handleSubmit = (e) => {
           />
         </label>
         {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-  {errors.username && <p>{errors.username}</p>}
-  {errors.firstName && <p>{errors.firstName}</p>}
-  {errors.lastName && <p>{errors.lastName}</p>}
-  {errors.password && <p>{errors.password}</p>}
-        <button disabled={!email ||  username.length < 4 || !firstName || !lastName || password.length < 6 || !confirmPassword } type="submit">Sign Up</button>
+        {errors.username && <p>{errors.username}</p>}
+        {errors.firstName && <p>{errors.firstName}</p>}
+        {errors.lastName && <p>{errors.lastName}</p>}
+        {errors.password && <p>{errors.password}</p>}
+        <button
+          disabled={
+            !email ||
+            username.length < 4 ||
+            !firstName ||
+            !lastName ||
+            password.length < 6 ||
+            !confirmPassword
+          }
+          type="submit"
+        >
+          Sign Up
+        </button>
       </form>
     </>
   );

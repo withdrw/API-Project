@@ -4,15 +4,22 @@
   gap: 20px;
   align-items: center;
 }
+.main{
+  margin: 20px 120px 0;
+}
 
-.spot-card{
-  background-color: beige;
+.page-container {
+  display: flex;
+}
+
+.spot-card {
+  background-color:#ADBBDA;
 }
 
 .spot-images {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-gap: 10px;
+  /* grid-gap: 10px; */
 }
 
 #mainImage {
@@ -24,38 +31,30 @@
   height: 100px;
 }
 
-#calloutBox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 #reserve {
   margin-top: 20px;
 }
 
-.callout-container {
+.description-container {
   position: relative;
-  height: 270px;
-  width: 470px;
-  padding-right: 40px;
-  margin-top: -50px; /* Adjust as needed to move it up */
-  margin-left: auto; /* Move it to the right */
+  display: flex;
+  /* Align items to start and end */
+  align-items: flex-start;
+  padding-top: 10px;
+  height: 300px;
+  border-bottom: 2px solid black;
+  width: 100%;
 }
 
-.calloutBox {
-  display: flex;
-  flex-direction: column;
-  border: 2px none black;
-  padding: 35px 35px;
-  border-radius: 8px;
-  gap: 20px;
-  box-shadow: 0px 3px 20px lightgray;
-  transition: box-shadow 0.3s ease;
-  background-color: white;
-  width: 400px;
-  height: 200px;
-  justify-content: flex-start;
+.callout-container {
+  position: absolute;
+  right: 0;
+  width: 400px; /* Adjust width as needed */
+  padding: 15px;
+  border-radius: 10px;
+  border: 2px solid black;
+  margin-left: 20px;
+  text-align: center;
 }
 
 
@@ -73,6 +72,7 @@
   width: 500px;
   border-radius: 10px;
 }
+
 .review {
   border-radius: 10px;
   /* Add any other styles you need */
@@ -80,9 +80,9 @@
   flex-direction: column;
   align-items: center;
 }
+
 .review-area {
-  width: 80%; /* Adjust width as needed */
-   /* Adjust margin-top to move it up */
+  width: 80%;
 }
 
 .review-form-header {
@@ -97,6 +97,7 @@
   background-color: white;
   cursor: pointer;
 }
+
 .button-submit:hover {
   background-color: aliceblue;
   border-color: black;
@@ -104,7 +105,6 @@
   border-left: 2px;
   border-bottom: 2px;
   border-right: 2px;
-
 }
 
 .review-modal {
@@ -114,14 +114,14 @@
 
 .spotImages-container {
   display: flex;
-  justify-content: flex-start; /* Align items to the start (left) */
-  align-items: flex-start; /* Align items to the start (top) */
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .image-grid {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  /* justify-content: space-between;
+  align-items: flex-start; */
 }
 
 .preview-image {
@@ -129,16 +129,12 @@
   height: auto;
 }
 
-.image-grid {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
 
 .preview-image {
   width: 400px;
   height: auto;
   height: 400px;
+  margin-right: 10px;
 }
 
 #preview {
@@ -150,24 +146,53 @@
   display: flex;
   flex-wrap: wrap;
   max-height: 400px;
-  width: 400px;
+   width: 500px;
   padding-left: 20px;
 }
 
 .other-image {
-  width: calc(50% - 5px); /* Adjust for grid gap */
-  margin-bottom: 10px; /* Adjust for grid gap */
-  position: relative; /* Ensure relative positioning */
+  width: calc(70% / 2); /* Adjust as needed */
+  margin-bottom: 10px; /* Adjust margin as needed */
+  margin-right: 0; /* Remove right margin */
+  position: relative;
   height: 190px;
-  padding-left: 5px;
   padding-top: 3px;
 }
 
 #small-image {
-  width: 195px;
+  /* width: 270px;
+  height: 193px; */
+  width: 160px; /* Automatically adjust width */
   height: 195px;
+
+
 }
 
 .spot-images-name {
   text-align: center;
+}
+
+.host-name {
+  font-weight: 700;
+  font-size: 30px;
+}
+
+.description-container .spot-name-description {
+  flex-direction: column;
+  width: 50%;
+  flex-wrap: wrap;
+  padding-right: 10px;
+}
+
+.description {
+  flex: 1; /* Allow the description to grow */
+  word-wrap: break-word; /* Wrap long words */
+  overflow: auto; /* or overflow: auto; */
+  max-width: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+  .other-image {
+    width: calc(50% - 5px); /* Set the width to 50% minus the desired gap */
+  }
 }

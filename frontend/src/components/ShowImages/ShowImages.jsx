@@ -26,45 +26,51 @@ function ShowImages() {
   }, [dispatch, spotId]);
 
   return (
-    <div className="page-container">
-      <div className="spotImages-container">
-        {isLoaded && spot && (
-          <div className="main">
-            <h1 className="spot-images-name">{spot.name}</h1>
-            <h2>
-              Location {spot.city}, {spot.state}, {spot.country}
-            </h2>
-            <div className="image-grid">
-              <div className="preview-image">
-                {spot.SpotImages && spot.SpotImages.length > 0 && (
-                  <img
-                    id="preview"
-                    src={spot.SpotImages[0].url}
-                    alt={`image 1`}
-                  />
-                )}
-              </div>
-              <div className="other-images">
-                {spot.SpotImages &&
-                  spot.SpotImages.slice(1, 5).map((image, index) => (
-                    <div key={index} className="other-image">
-                      {image && image.url && (
-                        <img
-                          id="small-image"
-                          src={image.url}
-                          alt={`image ${index + 2}`}
-                        />
-                      )}
-                    </div>
-                  ))}
-              </div>
+    <div className="main">
+      {isLoaded && spot && (
+        <>
+          <h1 className="spot-images-name">{spot.name}</h1>
+          <h2>
+            Location {spot.city}, {spot.state}, {spot.country}
+          </h2>
+          <div className="image-grid">
+            <div className="preview-image">
+              {spot.SpotImages && spot.SpotImages.length > 0 && (
+                <img
+                  id="preview"
+                  src={spot.SpotImages[0].url}
+                  alt={`image 1`}
+                />
+              )}
             </div>
-            <div>
-              <p>
+            <div className="other-images">
+              {spot.SpotImages &&
+                spot.SpotImages.slice(1, 5).map((image, index) => (
+                  <div key={index} className="other-image">
+                    {image && image.url && (
+                      <img
+                        id="small-image"
+                        src={image.url}
+                        alt={`image ${index + 2}`}
+                      />
+                    )}
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          <div className="description-container">
+            <div className="spot-name-description">
+              <div className="host-name">
                 Hosted by: {spot?.Owner?.firstName} {spot?.Owner?.lastName}
-              </p>
-              <p>{spot.description}</p>
-              <div id="reviews-header">
+              </div>
+              <div className="divider"></div>
+              <div className="description">{spot.description}</div>
+            </div>
+
+            <div className="callout-container">
+              <p>${spot.price}.00 / Night</p>
+              <div id="reviews">
                 {spot.numReviews ? (
                   spot.numReviews === 1 ? (
                     <p>
@@ -78,72 +84,23 @@ function ShowImages() {
                     </p>
                   )
                 ) : (
-                  <p>-- Average Stars --</p>
+                  <p>★ New</p>
                 )}
               </div>
-
-              <div className="review-list">
-                {(!reviews || !reviews.length) && !currUser && (
-                  <p>Be the first to post a review!</p>
-                )}
-
-                {currUser &&
-                  spot?.Owner &&
-                  currUser.id !== spot.Owner.id &&
-                  reviews &&
-                  !reviews.find((obj) => obj.userId === currUser.id) && (
-                    <OpenModalButton
-                      buttonText="Post Your Review"
-                      modalComponent={<ReviewFormModal spotId={spot.id} />}
-                    />
-                  )}
-
-                {reviews &&
-                  Object.values(reviews)
-                    .sort(
-                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-                    )
-                    .map((review, index) => (
-                      <div key={index}>
-                        <p>Reviewer: {review.User.firstName}</p>
-                        <p>
-                          Date of review:{" "}
-                          {new Date(review.createdAt).toLocaleString(
-                            "default",
-                            { month: "long", year: "numeric" }
-                          )}
-                        </p>
-                        <p>Comments: {review.review}</p>
-                        <p>Rating: {review.stars}</p>
-                        {currUser && review.userId === currUser.id && (
-                          <div id="delete">
-                            <OpenModalButton
-                              className="review-delete"
-                              modalComponent={
-                                <DeleteReviewModal
-                                  reviewId={review.id}
-                                  spotId={spotId}
-                                />
-                              }
-                              buttonText={"Delete"}
-                            />
-                          </div>
-                        )}
-                        <p>-------------------------</p>
-                      </div>
-                    ))}
-              </div>
+              {currUser && (
+                <button
+                  className="reserve-button"
+                  onClick={() => alert("Feature Coming Soon !")}
+                  id="reserve"
+                >
+                  Reserve
+                </button>
+              )}
             </div>
           </div>
-        )}
-      </div>
 
-      <div className="callout-container">
-        {isLoaded && spot && (
-          <div className="calloutBox">
-            <p>${spot.price}.00 / Night</p>
-
-            <div id="reviews">
+          <div>
+            <div id="reviews-header">
               {spot.numReviews ? (
                 spot.numReviews === 1 ? (
                   <p>
@@ -157,27 +114,62 @@ function ShowImages() {
                   </p>
                 )
               ) : (
-                <p>Average Stars</p>
+                <p> ★ New</p>
               )}
             </div>
-              <div className="review-list">
-  {(!reviews || !reviews.length) && !currUser && (
-    <p>Be the first to post a review!</p>
+
+            <div className="review-list">
+              {(!reviews || !reviews.length) && (
+                <p>Be the first to post a review!</p>
               )}
-              
-              </div>
-            {currUser && (
-              <button
-                className="reserve-button"
-                onClick={() => alert("Feature Coming Soon !")}
-                id="reserve"
-              >
-                Reserve
-              </button>
-            )}
+
+              {currUser &&
+                spot?.Owner &&
+                currUser.id !== spot.Owner.id &&
+                reviews &&
+                !reviews.find((obj) => obj.userId === currUser.id) && (
+                  <OpenModalButton
+                    buttonText="Post Your Review"
+                    modalComponent={<ReviewFormModal spotId={spot.id} />}
+                  />
+                )}
+
+              {reviews &&
+                Object.values(reviews)
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  .map((review, index) => (
+                    <div key={index}>
+                      <p>Reviewer: {review.User.firstName}</p>
+                      <p>
+                        Date of review:{" "}
+                        {new Date(review.createdAt).toLocaleString("default", {
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </p>
+                      <p>Comments: {review.review}</p>
+                      <p>Rating: {review.stars}</p>
+                      {currUser && review.userId === currUser.id && (
+                        <div id="delete">
+                          <OpenModalButton
+                            className="review-delete"
+                            modalComponent={
+                              <DeleteReviewModal
+                                reviewId={review.id}
+                                spotId={spotId}
+                              />
+                            }
+                            buttonText={"Delete"}
+                          />
+                        </div>
+                      )}
+                      <p>-------------------------</p>
+                    </div>
+                  ))}
+            </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }

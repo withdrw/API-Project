@@ -1,21 +1,21 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Shadows+Into+Light&display=swap');
 
 
 
 *{
-          font-family: "Briem Hand", cursive;
-  font-optical-sizing: auto;
-  font-weight: 600;
-  font-style: italic;
-        letter-spacing: 2px;
-      }
+    font-family: "Briem Hand", cursive;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 2px;
+}
 
-      body{
-        background-color: #50C878
-      }
+body{
+  background-color: #EDE8F5;
+}
 /* .dancing-script-<uniquifier> {
   font-optical-sizing: auto;
   font-weight: <weight>;
   font-style: normal;
-} */
+}
+ */

@@ -128,7 +128,8 @@ function ShowImages() {
                 currUser.id !== spot.Owner.id &&
                 reviews &&
                 !reviews.find((obj) => obj.userId === currUser.id) && (
-                  <OpenModalButton
+                <OpenModalButton
+                  className="reviewButton"
                     buttonText="Post Your Review"
                     modalComponent={<ReviewFormModal spotId={spot.id} />}
                   />

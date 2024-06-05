@@ -71,11 +71,14 @@ function ManageSpots() {
             <div className="updateBtn">
               <button onClick={() => updatingSpot(spot.id)}>Update</button>
             </div>
+
+            <div className="deleteBtn">
             <OpenModalButton
               className="modalClass"
               buttonText="Delete"
               modalComponent={<DeleteSpot spotId={spot.id} />}
               />
+              </div>
           </div>
         ))
       ) : (

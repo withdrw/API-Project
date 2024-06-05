@@ -41,3 +41,9 @@
     flex-wrap: wrap;
     justify-content: space-around;
   }
+.updateBtn{
+    margin-bottom: 10px;
+}
+.DeleteBtn{
+    margin-top: 2px;
+}

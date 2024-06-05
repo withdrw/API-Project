@@ -69,7 +69,9 @@
 }
 
 #modal-content {
-  width: 500px;
+  display: flex;
+  justify-content: center;
+  width: 400px;
   border-radius: 10px;
 }
 
@@ -136,6 +138,7 @@
   height: 400px;
   margin-right: 10px;
 }
+
 
 #preview {
   width: 400px;

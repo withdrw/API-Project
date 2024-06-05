@@ -69,7 +69,7 @@ function ManageSpots() {
               </p>
             </NavLink>
             <div className="updateBtn">
-              <button onClick={() => updatingSpot(spot.id)}>Update</button>
+              <button className="btnUpdate" onClick={() => updatingSpot(spot.id)}>Update</button>
             </div>
 
             <div className="deleteBtn">

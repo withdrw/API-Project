@@ -21,6 +21,7 @@
     width: 400px;
     border: 2px solid black;
     width: 30%;
+    height: 600px;
     margin-bottom: 20px;
 }
 .edit-spots:hover{
@@ -43,7 +44,20 @@
   }
 .updateBtn{
     margin-bottom: 10px;
+
 }
 .DeleteBtn{
     margin-top: 2px;
+}
+.btnUpdate{
+    border-radius: 20px;
+}
+.deleteBtn .modalClass{
+    border-radius: 20px;
+}
+button{
+    border-radius: 20px;
+}
+.deleteSpot{
+    margin-right: 7px;
 }

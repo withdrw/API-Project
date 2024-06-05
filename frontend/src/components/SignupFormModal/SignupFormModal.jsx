@@ -43,11 +43,12 @@ function SignupFormModal() {
   };
 
   return (
-    <>
+    <div className="form">
       <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
+      <form className="form" onSubmit={handleSubmit}>
+        <label className="labels">
           <input
+            className="newInput"
             placeholder="Email"
             type="text"
             value={email}
@@ -56,8 +57,9 @@ function SignupFormModal() {
           />
         </label>
         {errors.email && <p>{errors.email}</p>}
-        <label>
+        <label className="labels">
           <input
+            className="newInput"
             placeholder="Username"
             type="text"
             value={username}
@@ -66,8 +68,9 @@ function SignupFormModal() {
           />
         </label>
         {errors.username && <p>{errors.username}</p>}
-        <label>
+        <label className="labels">
           <input
+            className="newInput"
             placeholder="First Name"
             type="text"
             value={firstName}
@@ -76,8 +79,9 @@ function SignupFormModal() {
           />
         </label>
         {errors.firstName && <p>{errors.firstName}</p>}
-        <label>
+        <label className="labels">
           <input
+            className="newInput"
             placeholder="Last Name"
             type="text"
             value={lastName}
@@ -86,8 +90,9 @@ function SignupFormModal() {
           />
         </label>
         {errors.lastName && <p>{errors.lastName}</p>}
-        <label>
+        <label className="labels">
           <input
+            className="newInput"
             placeholder="Password"
             type="password"
             value={password}
@@ -96,8 +101,9 @@ function SignupFormModal() {
           />
         </label>
         {errors.password && <p>{errors.password}</p>}
-        <label>
+        <label className="labels">
           <input
+            className="newInput"
             placeholder="Confirm Password"
             type="password"
             value={confirmPassword}
@@ -110,7 +116,7 @@ function SignupFormModal() {
         {errors.firstName && <p>{errors.firstName}</p>}
         {errors.lastName && <p>{errors.lastName}</p>}
         {errors.password && <p>{errors.password}</p>}
-        <button
+        <button className="btn"
           disabled={
             !email ||
             username.length < 4 ||
@@ -124,7 +130,7 @@ function SignupFormModal() {
           Sign Up
         </button>
       </form>
-    </>
+    </div>
   );
 }
 

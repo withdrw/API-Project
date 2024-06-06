@@ -88,3 +88,44 @@
     flex-basis: 100%;
   }
 }
+
+
+.preview-image {
+  transition: transform 0.3s ease;
+}
+
+.preview-image:hover {
+  transform: scale(1.1);
+}
+
+.other-image {
+  transition: transform 0.3s ease;
+}
+
+.other-image:hover {
+  transform: scale(1.1);
+}
+.spot-card {
+  position: relative;
+  /* Other styles */
+}
+
+.spot-card:hover {
+  background-color: #ADBBDA;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+.spot-card:hover::before {
+  content: attr(title); /* Show the name of the spot */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.8); /* Background color of the tooltip */
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
+  white-space: nowrap; /* Prevent text from wrapping */
+  z-index: 999; /* Ensure the tooltip is above other elements */
+  pointer-events: none; /* Ensure the tooltip does not interfere with hover */
+}

@@ -26,7 +26,7 @@ function SpotDetails() {
                 key={spot.id}
                 to={`/spots/${spot.id}`}
                 className="spot-card"
-                title={spot.name} // Tooltip with the name of the spot
+                title={spot.name} 
               >
                 <img
                   className="spot-image"
